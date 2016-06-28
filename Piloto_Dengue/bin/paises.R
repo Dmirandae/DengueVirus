@@ -77,7 +77,12 @@ paises2 <- c("Brazil",
 paises <-c(paises1, paises2)
 
 datos <- read.csv(file="compendio_datos.csv", sep = "," , header = T)
+columna <- read.csv(file="columna_6.csv", sep=",")
 columna <- datos$V6
+col <- columna[,2]
+col <- as.data.frame(col)
+
+write.csv(columna, file="/home/andrea/LSB/Piloto_Dengue/data/columna_6.csv")
 
 subname <- data.frame()
 for(i in 1:length(columna)){
@@ -95,41 +100,107 @@ for(i in 1:length(columna)){
  
 length(which(is.na(subname)==T)) 
 
-write.table(datos, file="/home/andrea/PROYECTO_LSB/Piloto_Dengue/data/columna_paises.csv", sep = ",")
+write.table(subname, file="/home/andrea/LSB/Piloto_Dengue/data/columna_paises.csv", sep = ",")
 
+###########################
+## Columna de genotipos ##
+###########################
 
 genotipos <- c("I",
                "II",
                "III",
-               "IV",
                "V",
+               "IV",
+               "Cosmopolitan",
+               "American",
+               "Asian",
+               "American African",
+               "American/Asian",
+               "American-Asian",
+               "Asian/American",
+               "Asian I",
+               "Asian II",
+               "Genotype I",
+               "Genotype II",
+               "Genotype III",
+               "Genotype V",
+               "Genotype IV",
+               "type 1",
                "1",
                "2",
                "3",
                "4",
-               "5",
-               "Cosmopolitan",
-               "American",
-               "Asian/American",
-               "Asian I",
-               "Asian II"
+               "5"
                )
+class(genotipos)
+genotipos <- as.data.frame(genotipos)
+
 genoty <- data.frame()
 
 for(i in 1:length(columna)){
   result <- vector()
-  for(j in genotipos){
-    result[j] <- grepl(j,columna[i])
-    if(any(result==T)==F){
-      genoty[i,1] <- NA
+  for(j in 1:length(genotipos)){
+    result[j] <- match(genotipos[j],columna[i])
+    for(n in result){
+      if(any(is.na(result)==T)==T){
+        genoty[i,1] <- NA
+      }
+      if(is.numeric(match(j,columna[i])==T)==T){
+        genoty[i,1]<-"andrea"
+      } 
     }
-    if(grepl(j,columna[i])==TRUE){
-      genoty[i,1]<-j 
-    } 
+  }
+}
+#############################
+salida <- data.frame()
+for(averi in 1:length(col[,1])){
+  for(i in 1:length(genotipos[,1])){
+    result <- match(genotipos[i,1], col[averi,1])
+    if(is.na(result)==F){
+      salida[averi,1] <- genotipos[i,1]
+    }
   }
 }
 
-grepl("2", datos$V6)
+length(which(is.na(salida)==F))
+
+write.table(salida, file = "/home/andrea/LSB/Piloto_Dengue/data/columna_genotipos.csv")
+
+############################
+for(i in col){
+  for (j in genotipos){
+    result <- match(j,i)
+    if(is.na(result)==T){
+      genoty[i,1] <- NA
+    }
+    if(is.numeric(result)==T){
+      genoty[i,1] <- genotipos[j]
+    }
+  }
+}
+
+
+gen <- cbind(genoty,columna)
+
+a <- c("azul", "amarillo", "rojo", "cafe")
+b <- c("a", "rojo", "ca","amarillo", NA)
+c <- c(1,2,3)
+d <- c(NA,NA,NA,NA,NA,5)
+is.na(d)
+is.numeric(d)
+any(is.numeric(d))
+
+class(a)
+a[1]
+na <- is.na(b)==T
+na[3]
+aja <- vector()
+prueba <- match(b,a)
+is.na(prueba[1])==T
+is.numeric(c)==T
+if(is.numeric(prueba[2])==T){
+  aja[1]<-a[prueba[2]]
+}
 
 ####################################################
 # Columna Fecha
@@ -175,7 +246,7 @@ for(i in 1:length(columna)){
 }
 
 #Guardar la columna de años
-write.table(fechas, file="/home/andrea/PROYECTO_LSB/Piloto_Dengue/data/fecha_anos.csv")
+write.table(fechas, file="/home/andrea/LSB/Piloto_Dengue/data/fecha_anos.csv")
 
 fecha_meses <- data.frame()
 
@@ -191,3 +262,14 @@ for(i in 1:length(columna)){
     } 
   }
 }
+
+write.table(fecha_meses, file="/home/andrea/LSB/Piloto_Dengue/data/fecha_meses.csv")
+
+
+co_pa <- read.csv(file="columna_paises.csv", sep = "," , header = T)
+fe_an <- read.csv(file="fecha_anos.csv", sep = " " , header = T)
+fe_me <- read.csv(file="fecha_meses.csv", sep = " " , header = T)
+
+datos_2 <- cbind(datos,co_pa,fe_an,fe_me)
+
+write.table(datos_2, file="/home/andrea/LSB/Piloto_Dengue/data/Compendio_datos2.csv")
