@@ -58,7 +58,7 @@ write.csv(datos, file="/home/andrea/PROYECTO_LSB/Piloto_Dengue/data/compendio_da
 write.table(datos, file="/home/andrea/PROYECTO_LSB/Piloto_Dengue/data/total_datos.csv", sep = ";")
 
 ###############################################################
-
+# NO LO USE
 #Paquete seqinr
 library(seqinr)
 
