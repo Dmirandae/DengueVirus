@@ -1,6 +1,11 @@
 dat_seq <- read.table(file = "seq_cosmo.txt", header= T, sep=" ")
 seq <- dat_seq$seq
-
+length(seq[1])
+length(as.character.fact(seq[1]))
+length(strsplit(as.character(seq[4]), NULL)[[1]])
+(strsplit("A text I want to display with spaces", NULL)[[1]])
+seq[2]
+length(seq)
 ###
 library(stringi)
 
@@ -10,13 +15,13 @@ length(kmer3)
 
 result <- t(sapply(seq, stri_count_fixed,pattern=kmer3,overlap=TRUE))
 colnames(result) <- kmer3
-result
+
 
 ####
 # Distancia Euclidiana
 # sum(p(s1)-p(s2))^2
-?table()
-Euclidiana <- function(table){
+
+Euclidian <- function(table){
   distE <- matrix(0,nrow(table),nrow(table))
   for (i in 1:nrow(table)){
     for (j in 1:nrow(table)){
@@ -26,11 +31,111 @@ Euclidiana <- function(table){
   return(distE)
 }
 
-Euclidiana(result)
+Euclidian(result)
+
+###################
+# Dist Mahalanobis #
+####################
+
+lonN <- data.frame()
+
+#Varian <- function(table){
+#  for (i in 1:length(table)){
+#    lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
+#  }
+#}
+
+#Varian(seq)
+
+# N ---> las longitudes de todas las secuencias
+
+lonN <- data.frame()
+
+for (i in 1:length(seq)){
+  lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
+}
+
+
+# funcion de la esperada para k = 3
+# E(f(a1...ak)) = N-k+1/4^k
+
+Expec <- function(table){
+  Expe <- data.frame()
+  k <- 3
+  for(i in 1:nrow(table)){
+    Expe[i,1] <- ((table[i,1]-k+1)/4^k)
+  }
+  return(Expe)
+}
+
+esperada <- Expec(lonN)
+
+#funcion de la varianza para k = 3
+# Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
+
+Varian <- function(table){
+  vari <- data.frame()
+  k <- 3
+  J <- 0
+  for(i in 1:nrow(table)){
+    vari[i,1] <- abs(((table[i,1]-k+1)/4^k)*(1-1/4^k)-2/4^2*k*(k-1)*(table[i,1]-(3/2*k)+1)+2/4^k*sum((table[i,1]-k+1-1)* J/4))
+  }
+  return(vari)
+}
+
+varianza <- Varian(lonN)
+
+esp_var <- cbind(esperada,varianza)
+colnames(esp_var) <- c("esperada","varianza")
+esp_var$esperada[1,]
+esp_var[1,2]
+#Distancia de mahalanobis
+
+Manobis <- function(table){
+  distMa <- matrix(0,nrow(table),nrow(table))
+  for(i in 1:nrow(table)){
+    for(j in 1:nrow(table)){
+      distMa[i,j] <- sum(((table[,i]-esp_var1[i,1]/sqrt(esp_var1[i,2]))-(table[,j]-esp_var1[j,1]/sqrt(esp_var[j,2])))^2)
+    }
+  }
+  return(distMa)
+}
+
+Manobis(result1)
 
 ########
 # Distancia Conteo comun de k-mer
 # http://www.ncbi.nlm.nih.gov/pmc/articles/PMC373290/
+# log (0.1 + sum (min(p(s1),p(s2))/(min(l1,l2)-k +1)))
+# min(p(s1),p(s2) --> valor minimo del conteo de k-mers
+# min(l1,l2) --> Valor minimo de longitud de secuencia
+# k --> longitud de subsecuencia
+# log --> transformacion logaritmica
+
+min_tri <- list()
+Fractional <- function(table){
+  for(n in 1:ncol(table)){
+    for (i in 1:nrow(table)){
+      for (j in 1:nrow(table)){
+        k <- 3
+        min_tri[[i]] <- sum(min(c(i,j))/min(c(length(strsplit(as.character(seq[i]), NULL)[[1]])),length(strsplit(as.character(seq[j]), NULL)[[1]])))
+      }
+    }
+  }
+}
+
+Fractional(result)
+warnings()
+
+Fractional <- function(table){
+  distF <- matrix(0,nrow(table),nrow(table))
+  for (i in 1:nrow(table)){
+    for (j in 1:nrow(table)){
+      
+      dist[i,j] <- log2(0,1 + sum(min_s)/)
+    }
+  }
+}
 
 ####
 ## Archivo Igual
