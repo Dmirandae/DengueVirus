@@ -27,8 +27,6 @@ length(kmer3)
 result <- t(sapply(seq, stri_count_fixed,pattern=kmer3,overlap=TRUE))
 colnames(result) <- kmer3 
 
-kmer3[1][[1]]
-
 ########################
 # Distancia Euclidiana #
 # sum(p(s1)-p(s2))^2  ##
@@ -63,8 +61,9 @@ for(i in 1:nrow(kmerspt)){
   }
 }
 
-#####
+rownames(overlap) <- kmer3
 
+#Calculo de la longitud de cada una de las secuencias
 # N ---> las longitudes de todas las secuencias
 
 lonN <- data.frame()
@@ -77,9 +76,8 @@ for (i in 1:length(seq)){
 # funcion de la esperada para k = 3
 # E(f(a1...ak)) = N-k+1/4^k
 
-Expec <- function(table){
+Expec <- function(table, k=3){
   Expe <- data.frame()
-  k <- 3
   for(i in 1:nrow(table)){
     Expe[i,1] <- ((table[i,1]-k+1)/4^k)
   }
@@ -90,14 +88,6 @@ esperada <- Expec(lonN)
 
 #funcion de la varianza para k = 3
 # Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
-
-Varian <- function(table,k=3,J=0){
-  vari <- data.frame()
-  for(i in 1:nrow(table)){
-    vari[i,1] <- abs(((table[i,1]-k+1)/4^k)*(1-1/4^k)-2/4^2*k*(k-1)*(table[i,1]-(3/2*k)+1)+2/4^k*sum((table[i,1]-k+1-1)* J/4))
-  }
-  return(vari)
-}
 
 Varian <- function(table1, table2, k=3){
   vari <- data.frame()
@@ -110,27 +100,21 @@ Varian <- function(table1, table2, k=3){
 }
 
 varianza <- Varian(lonN,overlap)
-
-sum(overlap[1,])
-
-esp_var <- cbind(esperada,varianza)
-colnames(esp_var) <- c("esperada","varianza")
-esp_var$esperada[1,]
-esp_var[1,2]
+colnames(varianza) <- kmer3
 
 #Distancia de mahalanobis
 
 Manobis <- function(table){
-  distMa <- matrix(0,nrow(table),nrow(table))
+  nobis <- data.frame()
   for(i in 1:nrow(table)){
     for(j in 1:nrow(table)){
-      distMa[i,j] <- sum(((table[,i]-esp_var1[i,1]/sqrt(esp_var1[i,2]))-(table[,j]-esp_var1[j,1]/sqrt(esp_var[j,2])))^2)
+      nobis[i,j] <- sum(((table[i,]/varianza[i,])-(table[j,]/varianza[j,]))^2) 
     }
   }
-  return(distMa)
+  return(nobis)
 }
 
-Manobis(result1)
+mahalanobis <- Manobis(result)
 
 #########################################################
 # Distancia Conteo comun de k-mer                      ##
@@ -161,7 +145,6 @@ Fractional <- function(table){
   distF <- matrix(0,nrow(table),nrow(table))
   for (i in 1:nrow(table)){
     for (j in 1:nrow(table)){
-      
       dist[i,j] <- log2(0,1 + sum(min_s)/)
     }
   }
