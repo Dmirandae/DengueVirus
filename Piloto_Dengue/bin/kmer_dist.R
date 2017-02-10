@@ -27,6 +27,7 @@ length(kmer3)
 result <- t(sapply(seq, stri_count_fixed,pattern=kmer3,overlap=TRUE))
 colnames(result) <- kmer3 
 
+##################################################################################################################
 ########################
 # Distancia Euclidiana #
 # sum(p(s1)-p(s2))^2  ##
@@ -44,6 +45,7 @@ Euclidian <- function(table){
 
 Euclidian(result)
 
+##########################################################################################################################
 ###################
 # Dist Mahalanobis #
 ####################
@@ -72,21 +74,22 @@ for (i in 1:length(seq)){
   lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
 }
 
-
+###################################################################
 # funcion de la esperada para k = 3
 # E(f(a1...ak)) = N-k+1/4^k
 
-Expec <- function(table, k=3){
-  Expe <- data.frame()
-  for(i in 1:nrow(table)){
-    Expe[i,1] <- ((table[i,1]-k+1)/4^k)
-  }
-  return(Expe)
-}
+#Expec <- function(table, k=3){
+#  Expe <- data.frame()
+#  for(i in 1:nrow(table)){
+#    Expe[i,1] <- ((table[i,1]-k+1)/4^k)
+#  }
+#  return(Expe)
+#}
 
-esperada <- Expec(lonN)
+#esperada <- Expec(lonN)
+###################################################################
 
-#funcion de la varianza para k = 3
+# Funcion de la varianza para k = 3
 # Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
 
 Varian <- function(table1, table2, k=3){
@@ -102,7 +105,7 @@ Varian <- function(table1, table2, k=3){
 varianza <- Varian(lonN,overlap)
 colnames(varianza) <- kmer3
 
-#Distancia de mahalanobis
+# Calculo de la Distancia de mahalanobis
 
 Manobis <- function(table){
   nobis <- data.frame()
@@ -126,29 +129,21 @@ mahalanobis <- Manobis(result)
 # log --> transformacion logaritmica                   ##
 #########################################################
 
-min_tri <- list()
-Fractional <- function(table){
-  for(n in 1:ncol(table)){
-    for (i in 1:nrow(table)){
-      for (j in 1:nrow(table)){
-        k <- 3
-        min_tri[[i]] <- sum(min(c(i,j))/min(c(length(strsplit(as.character(seq[i]), NULL)[[1]])),length(strsplit(as.character(seq[j]), NULL)[[1]])))
-      }
+salida <- data.frame()
+for(i in 1:ncol(result)){
+  rest <- 1:length(result[,i])
+  salida_col <- vector()
+  for(f in 1:length(result[,i])){
+    res <- rest[-(1:f)]
+    for(ty in res){
+      salida_col <- c(salida_col, min(c(result[f,i], result[ty,i])))
     }
   }
+  salida[1:105,i] <- salida_col
 }
+View(salida)
 
-Fractional(result)
-warnings()
-
-Fractional <- function(table){
-  distF <- matrix(0,nrow(table),nrow(table))
-  for (i in 1:nrow(table)){
-    for (j in 1:nrow(table)){
-      dist[i,j] <- log2(0,1 + sum(min_s)/)
-    }
-  }
-}
+#Me falta nombrar las filas y columnas de Salida. PENDIENTE
 
 ####
 ## Archivo Igual
