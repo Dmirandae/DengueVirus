@@ -34,7 +34,7 @@ ater <- c("title", "organism", "extra", "caption", "slen", "subname")
 #subtype: "genotipo, pais, fuente de aislado, fecha de colecta
 #subname: describe a subtype
 
-# obtener informacion adicional
+# obtener informacion adicional que describí en el vector anterior
 ejm_1 <- extract_from_esummary(dengue_summs_111,ater, simplify = T)
 unname(ejm)
 
