@@ -129,6 +129,8 @@ mahalanobis <- Manobis(result)
 # log --> transformacion logaritmica                   ##
 #########################################################
 
+# Calculo de los minimos entre las frecuencias por pares de secuencias
+
 salida <- data.frame()
 for(i in 1:ncol(result)){
   rest <- 1:length(result[,i])
@@ -142,6 +144,60 @@ for(i in 1:ncol(result)){
   salida[1:105,i] <- salida_col
 }
 View(salida)
+
+colnames(salida) <- kmer3
+
+# Calculo de lo minimos entre las longitudes por pares de secuencias
+
+minlon <- vector()
+for (i in 1:nrow(lonN)){
+  algo <- 1:length(lonN[,1])
+  noalgo <- algo[-(1:i)]
+  for(n in noalgo){
+    minlon <- c(minlon,min(lonN[i,1],lonN[n,1]))
+  }
+}
+
+min_lon <- as.data.frame(minlon)
+
+###
+
+Fractional <- function(table,table1,k=3){
+  commonk<- data.frame()
+  for(i in 1:nrow(table)){
+    for(j in 1:nrow(table1)){
+      commonk[j,i] <- log10(0.1 + sum(table[i,]/table1[j,1]-k+1))
+    }
+  }
+  return(commonk)
+}
+
+Fractional <- function(table,table1,k=3){
+  commonk<- data.frame()
+  frecuen <- vector()
+  for(i in 1:nrow(table)){
+    sumlon <- vector()
+    frecuen <- sum(table[i,])
+    for(j in 1:nrow(table1)){
+      sumlon <-sum(table1[j,])
+      commonk[j,i] <- log(0.1 + (frecuen/sumlon) -k+1))
+    }
+  }
+  return(commonk)
+}
+
+
+Fraccional_common <- Fractional(salida,min_lon)
+
+Manobis <- function(table){
+  nobis <- data.frame()
+  for(i in 1:nrow(table)){
+    for(j in 1:nrow(table)){
+      nobis[i,j] <- sum(((table[i,]/varianza[i,])-(table[j,]/varianza[j,]))^2) 
+    }
+  }
+  return(nobis)
+}
 
 #Me falta nombrar las filas y columnas de Salida. PENDIENTE
 
