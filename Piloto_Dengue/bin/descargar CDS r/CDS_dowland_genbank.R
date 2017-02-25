@@ -5,8 +5,16 @@ library(seqinr)
 
 source('downloadCDSgb.R')
 
-ID<-c( ) 
+db_gc <-  read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos_Dengue_2016/bd_genoma_completo.csv")
+
+ID <- db_gc$N_Accesion
+ID <- ID[-c(103, 163, 164, 165)]
+ID <- ID[-c(472:495)]
+
+ID <- ID[1738:4016]
+
+#ID<-c( ) 
 length(ID)
 
 
-downloadCDSgb(No.Accesion = ID,save.fasta = 'Dengue_17')
+downloadCDSgb(No.Accesion = ID,save.fasta = 'Dengue_18')
