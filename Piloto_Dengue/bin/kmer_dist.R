@@ -161,119 +161,46 @@ for (i in 1:nrow(lonN)){
 min_lon <- as.data.frame(minlon)
 
 ###
-
-Fractional <- function(table,table1,k=3){
-  commonk<- data.frame()
-  for(i in 1:nrow(table)){
-    for(j in 1:nrow(table1)){
-      commonk[j,i] <- log10(0.1 + sum(table[i,]/table1[j,1]-k+1))
-    }
+fractional <- function(table, table1, k = 3){
+  salida <- data.frame()
+  for(j in 1:nrow(table)){
+    
+  }
+}
+Fractional <- function(table, table1, k=3){
+  commonk <- data.frame()
+  frec <- vector()
+  lonv <- vector()
+  for(j in 1:nrow(table)){
+    frec <- sum(table[j,])
+    lonv <- sum(table1[j,])
+    commonk[j,1] <- log(0.1 + frec/(lonv-2))
   }
   return(commonk)
 }
-
-Fractional <- function(table,table1,k=3){
-  commonk<- data.frame()
-  frecuen <- vector()
-  for(i in 1:nrow(table)){
-    sumlon <- vector()
-    frecuen <- sum(table[i,])
-    for(j in 1:nrow(table1)){
-      sumlon <-sum(table1[j,])
-      commonk[j,i] <- log(0.1 + (frecuen/sumlon) -k+1))
-    }
-  }
-  return(commonk)
-}
-
 
 Fraccional_common <- Fractional(salida,min_lon)
 
-Manobis <- function(table){
-  nobis <- data.frame()
-  for(i in 1:nrow(table)){
-    for(j in 1:nrow(table)){
-      nobis[i,j] <- sum(((table[i,]/varianza[i,])-(table[j,]/varianza[j,]))^2) 
-    }
-  }
-  return(nobis)
-}
+salida <- data.frame(NA)
+
+salida[1,2:15] <- entrada[1:14,1]
+salida[2,3:15] <- entrada[15:27,1]
+salida[3,4:15] <- entrada[28:39,1]
+salida[4,5:15] <- entrada[40:50,1]
+salida[5,6:15] <- entrada[51:60,1]
+salida[6,7:15] <- entrada[61:69,1]
+salida[7,8:15] <- entrada[70:77,1]
+salida[8,9:15] <- entrada[78:84,1]
+salida[9,10:15] <- entrada[85:90,1]
+salida[10,11:15] <- entrada[91:95,1]
+salida[11,12:15] <- entrada[96:99,1]
+salida[12,13:15] <- entrada[100:102]
+salida[13,14:15] <- entrada[103:104]
+salida[14,15:15] <- entrada[105:105]
 
 #Me falta nombrar las filas y columnas de Salida. PENDIENTE
 
-####
-## Archivo Igual
-
-##############################################################################
-##              Calculo de k-mers y test de Mantel para ADN                 ##
-##          11-09-15 Laboratorio de Sistematica y Biogeografia              ##                                        
-##############################################################################
-
-
-#Cargar datos
-
-dat_seq <- read.table(file = "seq_cosmo.txt", header= T, sep=" ")
-seq <- dat_seq$seq
-
-dat_anos <- read.table(file = "seqNS.txt", header=T, sep=" ")
-seqaa <- dat_anos$seq
-
-
-# Conteo de k-mer
-
-library(stringi)
-
-kmer3 <-  paste(rep(c("A","C","G","T"),each=16),rep(c("A","C","G","T"),each=4),c("A","C","G","T"),sep = "")
-
-length(kmer3)
-
-result <- t(sapply(seq, stri_count_fixed,pattern=kmer3,overlap=TRUE))
-colnames(result) <- kmer3
-a <- result[8,]
-
-
-### distancia euclidiana
-#table para no asignar el objeto vacio
-
-distEucli <- function(matriz=NULL){
-  result <- matrix(0,nrow(matriz),nrow(matriz))
-  for (i in 1:nrow(matriz)){
-    for (j in 1:nrow(matriz)){
-      result[i,j] <- sum((matriz[i,]-matriz[j,])^2)
-    }
-  }
-  return(result)
-}
-
-distEucli(result)
-
-dist_eucli <- distEucli(result)
-
-###
-distEucli <- function(matriz=NULL){
-  result <- matrix(0,nrow(matriz),nrow(matriz))
-  for (i in 1:nrow(matriz)){
-    for (j in 1:nrow(matriz)){
-      result[i,j] <- sum((matriz[i,]-matriz[j,])^2)
-    }
-  }
-  return(result)
-}
-
-### Delta del tiempo
-
-tiempo <- function(x){
-  result <- matrix(0,length(x),length(x))
-  for (i in 1:length(x)){
-    for (j in 1:length(x)){
-      result[i,j] <- abs(x[[i]]-x[[j]])
-    }
-  }
-  return(result)
-}
-
-tiempo(anos)
-
+## Archivo antiguo
 ####################
 ## Test de Mantel###
 ####################
