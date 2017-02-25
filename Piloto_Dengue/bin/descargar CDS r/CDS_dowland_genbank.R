@@ -5,7 +5,7 @@ library(seqinr)
 
 source('downloadCDSgb.R')
 
-db_gc <-  read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos_Dengue_2016/bd_genoma_completo.csv")
+db_gc <-  read.csv(file = "/home/andrea/LSB/Piloto_Dengue/bin/descargar CDS r/bd_genoma_completo.csv")
 
 ID <- db_gc$N_Accesion
 ID <- ID[-c(103, 163, 164, 165)]
