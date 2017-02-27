@@ -11,7 +11,7 @@ ID <- db_gc$N_Accesion
 ID <- ID[-c(103, 163, 164, 165)]
 ID <- ID[-c(472:495)]
 
-ID <- ID[3554:4016]
+ID <- ID[3555:4016]
 
 #ID<-c( ) 
 length(ID)
