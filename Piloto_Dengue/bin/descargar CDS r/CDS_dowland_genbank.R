@@ -11,10 +11,10 @@ ID <- db_gc$N_Accesion
 ID <- ID[-c(103, 163, 164, 165)]
 ID <- ID[-c(472:495)]
 
-ID <- ID[3886:4016]
+ID <- ID[3894:4016]
 
 #ID<-c( ) 
 length(ID)
 
 
-downloadCDSgb(No.Accesion = ID,save.fasta = 'Dengue_24')
+downloadCDSgb(No.Accesion = ID,save.fasta = 'Dengue_25')
