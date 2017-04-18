@@ -9,7 +9,7 @@ db_gc <-  read.csv(file = "/home/andrea/LSB/Piloto_Dengue/bin/descargar CDS r/bd
 
 ID <- db_gc$N_Accesion
 ID <- ID[-c(103, 163, 164, 165)]
-ID <- ID[-c(472:495)]
+
 
 ID <- ID[3991:4016]
 
@@ -18,5 +18,3 @@ length(ID)
 
 
 downloadCDSgb(No.Accesion = ID,save.fasta = 'Dengue_28')
-
-## ya quiero terminar esta mierdaaaaaaaaa!!!!!
