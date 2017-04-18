@@ -3,6 +3,7 @@
 #########################################################################
 
 ## Datos del gen E con Pais, localidad y año, sin Nas ####
+##########################################################
 
 #Leer archivo .csv de la base de datos del gen E con pais, localidad y año
 
@@ -17,14 +18,17 @@ length(which(seroE=="Dengue virus 2"))
 length(which(seroE=="Dengue virus 3"))
 length(which(seroE=="Dengue virus 4"))
 
-## Datos de genoma completo 
+## Datos de genoma completo#### 
+###############################
 
 # Leer el archivo .csv de la base de datos de genoma completo
 
 db_gc <-  read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos_Dengue_2016/bd_genoma_completo.csv")
 
-# Extraer 
+# Extraer las columnas de pais. localidad y fecha
 Genome_pla <- db_gc[9:11]
+
+# Saber cuantos datos tiene inf de las 3 columnas pais, localidad y fecha
 
 na_genome <- data.frame()
 for (i in 1:nrow(Genome_pla)){
@@ -37,3 +41,19 @@ for (i in 1:nrow(Genome_pla)){
 }
 
 length(which(na_genome==1))
+
+
+longy <- db_gc$Size_sequence
+
+
+########################################333333
+##   Estadisticos para UCLUST          #######
+##############################################
+
+View(db_gc)
+
+diff_uclust <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo_bd2016/diff_ideff_0.csv", sep = "_", header = F)
+
+dpl
+
+
