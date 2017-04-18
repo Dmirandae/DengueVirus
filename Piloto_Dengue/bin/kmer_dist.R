@@ -6,17 +6,11 @@
 
 # Lectura de datos: secuencias de DNA Dengue
 
-dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/genomas_denv2/cosmopolitan/seq_cosmo.txt", header= T, sep=" ")
+dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Piloto_congreso_CCB/genomas_denv2/cosmopolitan/seq_cosmo.txt", header= T, sep=" ")
+
 seq <- dat_seq$seq
-length(seq[1])
-length(as.character.fact(seq[1]))
-length(strsplit(as.character(seq[4]), NULL)[[1]])
-(strsplit("A text I want to display with spaces", NULL)[[1]])
-seq[2]
-length(seq)
 
-
-# Conteo de k-mers para tripletas
+# Conteo de k-mers para tripletas k=3
 
 library(stringi)
 
@@ -26,8 +20,9 @@ length(kmer3)
 
 result <- t(sapply(seq, stri_count_fixed,pattern=kmer3,overlap=TRUE))
 colnames(result) <- kmer3 
+result <- as.data.frame(result)
 
-##################################################################################################################
+######################################################################################################
 ########################
 # Distancia Euclidiana #
 # sum(p(s1)-p(s2))^2  ##
@@ -43,9 +38,11 @@ Euclidian <- function(table){
   return(distE)
 }
 
-Euclidian(result)
+Euclidiana <- Euclidian(result)
 
-##########################################################################################################################
+Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/Dist_Euclidiana.csv")
+
+#######################################################################################################
 ###################
 # Dist Mahalanobis #
 ####################
@@ -74,20 +71,6 @@ for (i in 1:length(seq)){
   lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
 }
 
-###################################################################
-# funcion de la esperada para k = 3
-# E(f(a1...ak)) = N-k+1/4^k
-
-#Expec <- function(table, k=3){
-#  Expe <- data.frame()
-#  for(i in 1:nrow(table)){
-#    Expe[i,1] <- ((table[i,1]-k+1)/4^k)
-#  }
-#  return(Expe)
-#}
-
-#esperada <- Expec(lonN)
-###################################################################
 
 # Funcion de la varianza para k = 3
 # Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
@@ -107,18 +90,18 @@ colnames(varianza) <- kmer3
 
 # Calculo de la Distancia de mahalanobis
 
-Manobis <- function(table){
-  nobis <- data.frame()
-  for(i in 1:nrow(table)){
-    for(j in 1:nrow(table)){
-      nobis[i,j] <- sum(((table[i,]/varianza[i,])-(table[j,]/varianza[j,]))^2) 
-    }
+nobis <- data.frame()
+for (i in 1:nrow(result)){
+  for (j in 1:nrow(varianza)){
+    nobis[i,j] <- sum(((result[i,]/varianza[i,])-(result[j,]/varianza[j,]))^2)
   }
-  return(nobis)
 }
 
-mahalanobis <- Manobis(result)
+Mahalanobis <- nobis
 
+Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/Dist_Mahalanobis.csv")
+
+########################################################################################################
 #########################################################
 # Distancia Conteo comun de k-mer                      ##
 # http://www.ncbi.nlm.nih.gov/pmc/articles/PMC373290/  ##
@@ -161,12 +144,9 @@ for (i in 1:nrow(lonN)){
 min_lon <- as.data.frame(minlon)
 
 ###
-fractional <- function(table, table1, k = 3){
-  salida <- data.frame()
-  for(j in 1:nrow(table)){
-    
-  }
-}
+# Calculo de la ecuacion completa
+# Fraccional k-mer common
+
 Fractional <- function(table, table1, k=3){
   commonk <- data.frame()
   frec <- vector()
@@ -181,7 +161,33 @@ Fractional <- function(table, table1, k=3){
 
 Fraccional_common <- Fractional(salida,min_lon)
 
-salida <- data.frame(NA)
+
+#Construcción de la matriz para Fraccional k-mer common
+common <- Fraccional_common$V1
+
+mmtx <- matrix(data = 0, nrow = 15, ncol = 15, byrow = FALSE,
+       dimnames = NULL)
+mmtx[1+1,1]
+
+for (i in 1:nrow(mmtx)){
+  n <- nrow(mmtx)
+  m <- nrow(mmtx)-i
+  mfila <- common[1:m]
+  common <- common[-(1:length(mfila))]
+  mmtx[i:n,i] <- mfila
+}
+
+
+fra_matrix <- data.frame(NA)
+for (i in 1:nrow(result)){
+  n <- nrow(result)
+  m <- nrow(result)-i
+  mfila <- common[1:m]
+  common <- common[-(1:length(mfila))]
+  fra_matrix[1:n,i] <- c(1:i,mfila) 
+}
+
+Dist_Fractional <- write.csv(fra_matrix, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/Dist_Fraccional.csv")
 
 salida[1,2:15] <- entrada[1:14,1]
 salida[2,3:15] <- entrada[15:27,1]
@@ -199,6 +205,7 @@ salida[13,14:15] <- entrada[103:104]
 salida[14,15:15] <- entrada[105:105]
 
 #Me falta nombrar las filas y columnas de Salida. PENDIENTE
+#########################################################################################################
 
 ## Archivo antiguo
 ####################
