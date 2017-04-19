@@ -50,10 +50,37 @@ longy <- db_gc$Size_sequence
 ##   Estadisticos para UCLUST          #######
 ##############################################
 
+#Leer base de datos de Dengue
+
+db_gc <-  read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos_Dengue_2016/bd_genoma_completo.csv")
+
 View(db_gc)
+
+# Extraer los numeros de acceso
+
+Nacso <- db_gc$N_Accesion
+
+#Leer archivo con los IDs de las secuencias eliminadas por uclust
 
 diff_uclust <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo_bd2016/diff_ideff_0.csv", sep = "_", header = F)
 
-dpl
+View(diff_uclust)
 
+diff_nace <- as.character(diff_uclust$V4)
 
+# Extraer las posiciones de las secuencias eliminas por uclust en la base de datos de Dengue
+
+pon <- data.frame()
+for(i in diff_nace){
+  pon[i,1] <- which(Nacso==i)
+}
+ 
+View(pon)
+
+# Extraer de la base de datos las columnas de pais, localidad y año
+
+newdb <- db_gc[,9:11]
+
+# Obtener las columnas pais, localidad y año solo de las IDs eliminadas por uclust
+
+info <- newdb[pon$V1[1:2306],]
