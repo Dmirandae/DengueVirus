@@ -47,13 +47,17 @@ head(locations)
 
 
 
-datos_loc <- read.csv(file = "/home/andrea/LSB/Compendio_datos_total.csv", stringsAsFactors = F)
+datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue_2017/bd_total_0717.csv", stringsAsFactors = F)
 
-names_loc <- datos_loc$V1.3
+datos_pais <- datos$Country
 
-address <- unique(names_loc)
+paises <- unique(datos_pais)
 
-write.csv(locations, file = "/home/andrea/LSB/Coordenadas_localidades.csv")
+coordenadas_pais <- ldply(paises, function(x) geoCode(x))
+names(coordenadas_pais)  <- c("lat","lon","location_type", "formatted")
+head(coordenadas_pais)
+
+
 
 #The following are the different location types:
   
