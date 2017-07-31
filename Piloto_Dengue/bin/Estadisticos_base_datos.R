@@ -84,3 +84,7 @@ newdb <- db_gc[,9:11]
 # Obtener las columnas pais, localidad y año solo de las IDs eliminadas por uclust
 
 info <- newdb[pon$V1[1:2306],]
+
+unique(summary(info$Year))
+which(info$Year==1600)
+info$Year[750]
