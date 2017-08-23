@@ -1,7 +1,20 @@
+########################################################################################
+##   Depuración de los datos obtenidos del GenBank sobre el virus del Dengue  ##########
+##                  Usando las funciones grep, grepl y match                  ##########
+########################################################################################
+
+# Paquetes requridos
 install.packages("rworldmap")
 require(rworldmap)
+
+# Necesitamos una base de datos ya existente con los nombres de todos los paises del mundo
+
 data("countryExData")
 paises1 <- countryExData[,2]
+
+# Adicional realizamos un vector de nombre de paises con algunos nombres de islas 
+# y de paises donde se ha registrado Dengue
+
 paises2 <- c("Brazil", 
             "India", 
             "Puerto Rico", 
@@ -74,7 +87,13 @@ paises2 <- c("Brazil",
             "South Korea",
             "Guyana",
             "Timor")
+
+# Unimos los dos vectores
+
 paises <-c(paises1, paises2)
+
+# Cargamos nuestros datos de interes, en este caso los obtenidos desde el GenBank para
+# el virus del Dengue
 
 datos <- read.csv(file="/home/andrea/LSB/Piloto_Dengue/data/compendio_datos.csv", sep = "," , header = T)
 columna <- read.csv(file="/home/andrea/LSB/Piloto_Dengue/data/columna_6.csv", sep=",")
@@ -84,14 +103,16 @@ columna6 <- as.data.frame(columna6)
 col_1 <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/columna6_1.csv", header = T)
 col_2 <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/columna6_2.csv")
 
-
-class(col_1)
-
-
 write.csv(col_1,file = "/home/andrea/LSB/Piloto_Dengue/data/col_1.csv")
 write.csv(col_2,file = "/home/andrea/LSB/Piloto_Dengue/data/col_2.csv")
 
 write.csv(columna6, file="/home/andrea/LSB/Piloto_Dengue/data/columna6_bruto.csv")
+
+# Buscar dentro de "columna" aquellos que coincidann con un i de "paises" y escribirlos
+# en una nueva columna
+# Buscar en "columna" solo los nombres de los paises tomando como base el vector "paises"
+# y en una nueva columna para las filas donde hay coincidencia con un pais, se escribe
+# ese "pais" y para las filas donde no hay coincidencia se escribe "NA"
 
 subname <- data.frame()
 for(i in 1:length(columna)){
@@ -109,11 +130,17 @@ for(i in 1:length(columna)){
  
 length(which(is.na(subname)==T)) 
 
+# Se guarda la columna resultante como "columna_paises.csv"
+
 write.table(subname, file="/home/andrea/LSB/Piloto_Dengue/data/columna_paises.csv", sep = ",")
+##------------------------------------------------------------------------------------###
 
 ###########################
 ## Columna de genotipos ##
 ###########################
+
+# Creamos un vector con todas las formas en que se denominan los genotipos en los 
+# datos originales
 
 genotipos <- c("I",
                "II",
@@ -144,6 +171,10 @@ genotipos <- c("I",
 class(genotipos)
 genotipos <- as.data.frame(genotipos)
 
+# Buscar las coincidencias entre los vectores "col" y "genotipos"
+# y crear una nueva columna donde las coincidencias quedan iguales 
+# y las no coincidencias quedan como "NA"
+
 genoty <- data.frame()
 
 salida <- data.frame()
@@ -158,14 +189,18 @@ for(averi in 1:length(col[,1])){
 
 length(which(is.na(salida)==F))
 
+# Grardamos la salida del bucle como "columna_genotipos.csv"
+
 write.table(salida, file = "/home/andrea/LSB/Piloto_Dengue/data/columna_genotipos.csv")
 
 
 gen <- cbind(genoty,columna)
 
-####################################################
-# Columna Fecha
-##############################################
+##-----------------------------------------------------------------------------------###
+
+########################
+# Columna Fecha      ###
+########################
 
 # Creo vector de meses y vector de años
 
@@ -190,7 +225,11 @@ anos_frame[long_anos,1] <- anos
 #rownames(month_date) <-1:5004
 
 
-# Hacer la busqueda de meses y años en la columna 6 
+# Hacer la busqueda de meses y años en la columna 6, y crear una nueva columna
+# donde las coincidencias quedaran con el mes y ano y las no coincidencias como NA
+
+# Para los anos
+
 fechas <- data.frame()
 
 for(i in 1:length(columna)){
@@ -208,6 +247,8 @@ for(i in 1:length(columna)){
 
 #Guardar la columna de años
 write.table(fechas, file="/home/andrea/LSB/Piloto_Dengue/data/fecha_anos.csv")
+
+#Para los meses
 
 fecha_meses <- data.frame()
 
@@ -233,9 +274,17 @@ fe_me <- read.csv(file="fecha_meses.csv", sep = " " , header = T)
 
 datos_2 <- cbind(datos,co_pa,fe_an,fe_me)
 
-#########################################
-## Columna localidades
-#########################################
+##-------------------------------------------------------------------------------------##
+
+############################
+## Columna localidades  ####
+############################
+
+# Para la columna localidades, varias cosas, porque las localidades en los datos originales
+# Se encuentran el las misma columna junto con el pais, la fecha y la fuente de aislamiento
+
+# Crear un vector "serum" con todas las diferentes fuentes de aislamiento de las muestras
+
 unicos <- unique(col_2)
 serum <- c("serum", "blood",
            "human serum", 
@@ -485,9 +534,15 @@ serum <- c("serum", "blood",
            "D2-ThNH"
            )
 
-localidades <- data.frame()
+# Crear un vector "patron" con los paises, anos, meses y fuente de aislameinto
 
 patron <- c(anos,month,paises,serum)
+
+# Bucle para buscar coincidencias entre "patron" y "col_2", en este caso
+# en la nueva columna las coincidencias seran "NA" y las no coincidencias seran
+# las localidades
+
+localidades <- data.frame()
 
 for(i in 1:length(col_2$X2)){
   result <- vector()
@@ -501,12 +556,23 @@ for(i in 1:length(col_2$X2)){
   }
 }
 
+# Guardar la salida como "columna_localidades_2.csv"
+
 write.csv(localidades, file ="/home/andrea/LSB/Piloto_Dengue/data/columna_localidades_2.csv")
 
+# revizar que la salida solo contenga localidades
 dan <- unique(localidades)
+
+# Unir la columna generada con otra columna con datos adicionales de localidades
+
 localidades_1 <- read.csv(file="/home/andrea/LSB/Piloto_Dengue/data/columna_localidades.csv")
 gen <- cbind(localidades,col_2$X2)
-#############################
+
+###------------------------------------------------------------------------------------###
+
+# Se unen todos las columnas generadas y se obtiene una nueva version mas depurada 
+# de la base de datos "Compendio_datos_totales.csv"
+
 datos <- read.csv(file="/home/andrea/LSB/Piloto_Dengue/data/compendio_datos.csv", sep = "," , header = T)
 co_geno <- read.csv(file="/home/andrea/LSB/Piloto_Dengue/data/columna_genotipos.csv", sep=" ")
 co_pais <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/columna_paises.csv")
