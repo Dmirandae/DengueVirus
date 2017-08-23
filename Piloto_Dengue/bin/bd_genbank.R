@@ -1,4 +1,9 @@
-### Obtener base de datos de Dengue desde GenBank ###
+########################################################################################
+####             Obtener base de datos de Dengue desde GenBank                     #####
+####           Para el virus de Dengue, usando el paquete rentrez                  #####
+####                                 2016                                          #####
+########################################################################################
+
 
 #paquete rentez
 library(rentrez)
@@ -57,43 +62,43 @@ for(i in dengue_search$ids[16760:18389]){
 write.csv(datos, file="/home/andrea/PROYECTO_LSB/Piloto_Dengue/data/compendio_datos.csv")
 write.table(datos, file="/home/andrea/PROYECTO_LSB/Piloto_Dengue/data/total_datos.csv", sep = ";")
 
-###############################################################
+###########################################################################################
 # NO LO USE
 #Paquete seqinr
-library(seqinr)
+#library(seqinr)
 
 #Elegir la base de datos en la que quiero buscar
-choosebank("genbank")
+#choosebank("genbank")
 
 #buscar por nombre de la especie"SP"
-seqdengue <- query("seqdengue","SP=Dengue virus")
+#seqdengue <- query("seqdengue","SP=Dengue virus")
 
 #atributos de la busqueda
-attributes(seqdengue)
+#attributes(seqdengue)
 
 #numero de datos encontrados
-seqdengue$nelem
+#seqdengue$nelem
 
 #informacion de los datos encontrados: numero de accsesion
-datos <- seqdengue$req
+#datos <- seqdengue$req
 
 #cerrar conexion
-closebank()
+#closebank()
 
 ###Guardar datos (N° accesion y longitud) de las secuencias
 
 #crear dataframe vacio
-datos2 <- data.frame()
+#datos2 <- data.frame()
 
 #bucle para llenar el dataframe con datos de las secuencias
-for(i in 1:18424){
-  datos2[i,"accesion"] <- datos[[i]][1]
-  datos2[i, "length"] <- attr(datos[[i]],"length")
-}  
+#for(i in 1:18424){
+#  datos2[i,"accesion"] <- datos[[i]][1]
+#  datos2[i, "length"] <- attr(datos[[i]],"length")
+#}  
 
 #guardar datos en un .csv
-write.table(datos2, file="seqdengue.csv", sep=",")
+#write.table(datos2, file="seqdengue.csv", sep=",")
 
-annots <- getAnnot(datos[[1]])
+#annots <- getAnnot(datos[[1]])
       
-annots[1:20]=="ORGANISM "
+#annots[1:20]=="ORGANISM "
