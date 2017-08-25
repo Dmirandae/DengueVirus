@@ -86,22 +86,25 @@ datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Da
 datos_pais <- datos$Country
 
 paises <- unique(datos_pais)
+paises <- na.omit(paises)
+length(paises)
 
 #Busqueda de las coordenadas geograficas a partir del vector "paises":
 
 coordenadas_paises <- ldply(paises, function(x) geoCode(x))
 names(coordenadas_paises)  <- c("lat","lon","location_type", "formatted")
 head(coordenadas_paises)
+nrow(coordenadas_paises)
 
 # Anadir los datos de latitud, longitud como nuevas columnas a la base de datos de Dengue
 
 coordenadas_paises$formatted <- as.character(coordenadas_paises$formatted)
 
 for(i in 1:length(coordenadas_paises$formatted)){
-  datos[which(datos$Country==coordenadas_paises$formatted[i]),"lat_country"] <- coordenadas_paises$lat[i]
-  datos[which(datos$Country==coordenadas_paises$formatted[i]),"lon_country"] <- coordenadas_paises$lon[i]
-  datos[which(datos$Country==coordenadas_paises$formatted[i]),"locationtype_country"] <- coordenadas_paises$location_type[i]
-  datos[which(datos$Country==coordenadas_paises$formatted[i]),"formatted_country"] <- coordenadas_paises$formatted[i]
+  datos[which(datos$Country==paises[i]),"lat_country"] <- coordenadas_paises$lat[i]
+  datos[which(datos$Country==paises[i]),"lon_country"] <- coordenadas_paises$lon[i]
+  datos[which(datos$Country==paises[i]),"locationtype_country"] <- coordenadas_paises$location_type[i]
+  datos[which(datos$Country==paises[i]),"formatted_country"] <- coordenadas_paises$formatted[i]
 }
 ##----------------------------------------------------------------------------------######
 
@@ -117,15 +120,31 @@ datos_localidad <- datos$Localization
 # dos datos (pais y localidad) y con el nuevo vector se realiza la busqueda de las coordenadas
 
 # Las posiciones de los registros de localidades sin NAs
+
 localidad <- which(is.na(datos_localidad)==F)
+
+# Nombres de las localidades unicas
+nombres_localidad <- unique(datos_localidad[which(is.na(datos_localidad)==F)])
+length(nombres_localidad)
+
+# Unir el nombre de la localidad con su pais corespondiente y lo guardamos en un nuevo
+# vector llamada "localidad_pais"
 
 localidad_pais <- vector()
 
 for(i in 1:length(localidad)){
-  localidad_pais[i] <- paste(datos_localidad[localidad[i]],",",datos_pais[localidad[i]])
+  localidad_pais[i] <- paste(datos_localidad[localidad[i]],", ",datos_pais[localidad[i]], sep = "")
 }
 
 localidad_pais <- unique(localidad_pais)
+length(localidad_pais)
+
+# Zhejiang(4), 
+# Hyderabad(1, en internet dice que es una ciudad de la India), 
+# Amazonas(1), 
+# Abidjan(1, ya lo modifique en la base de datos)
+# Revizar los gb de Dominica en comentarios
+
 
 # Busqueda de las coordenadas geograficas a partir del vector "localidad_pais":
 
@@ -139,8 +158,10 @@ head(coordenadas_localidades)
 coordenadas_localidades$formatted <- as.character(coordenadas_localidades$formatted)
 
 for(i in 1:length(coordenadas_localidades$formatted)){
-  datos[which(datos$Localization==coordenadas_localidades$formatted[i]),"lat_localization"] <- coordenadas_localidades$lat[i]
-  datos[which(datos$Localization==coordenadas_localidades$formatted[i]),"lon_localization"] <- coordenadas_localidades$lon[i]
-  datos[which(datos$Localization==coordenadas_localidades$formatted[i]),"locationtype_localization"] <- coordenadas_localidades$location_type[i]
-  datos[which(datos$Localization==coordenadas_localidades$formatted[i]),"formatted_localization"] <- coordenadas_localidades$formatted[i]
+  datos[which(datos$Localization==nombres_localidad[i]),"lat_localization"] <- coordenadas_localidades$lat[i]
+  datos[which(datos$Localization==nombres_localidad[i]),"lon_localization"] <- coordenadas_localidades$lon[i]
+  datos[which(datos$Localization==nombres_localidad[i]),"locationtype_localization"] <- coordenadas_localidades$location_type[i]
+  datos[which(datos$Localization==nombres_localidad[i]),"formatted_localization"] <- coordenadas_localidades$formatted[i]
 }
+
+write.csv(datos, file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv")
