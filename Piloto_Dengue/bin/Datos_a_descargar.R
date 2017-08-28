@@ -1,15 +1,18 @@
-###################################################################################
-#                Datos a Descaragar para empezar a correr                   #######
-###################################################################################
+################################################################################
+####              Descargar secuencias de Genoma completo                #######
+###                y del Gen E para el virus del Dengue                  #######
+################################################################################
 
 ## DESCARGAR BASE DE DATOS DE GENOMA COMPLETO ###
 
-# Leer el archivo con la base de datos de genoma completo.
-db_gc <-  read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos_Dengue_2016/bd_genoma_completo.csv")
+# Leer el archivo con la base de datos 
+datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv", stringsAsFactors = F)
+
+# Extraigo solo los datos que tiene genoma completo
+Complete_genome <- datos[which(datos$Gene=="Complete_Genome"),]
 
 # Lista de numeros de acceso
-ID <- db_gc$N_Accesion
-
+ID <- Complete_genome$N_Accesion
 
 # Presenta problemas con la secuencia 103, 163, 164 y 165 la elimine de los datos para ver si es solo esa y poder a vanzar.
 ID <- ID[-c(103, 163, 164, 165)]
@@ -32,21 +35,32 @@ ID <- ID[4001:4016]
 
 sequences_dengue <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/bin/descargar CDS r/Dengue_total")
 
+#-----------------------------------------------------------------------------------------
+
+###################################
+# Descargar secuencias del gen E  #
+####################################
+
+# Librerias requeridas
+
 library(ape)
 library(seqinr)
-# Leer base de datos del Gen E
 
-dat_genE <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos_Dengue_2016/bd_GenE.csv")
+# Extraigo solo los datos que tiene genoma completo
 
-genE_naccesion <- dat_genE$N_Accesion
+Gen_E <- datos[which(datos$Gene=="E"),]
 
-genE_sequences <- read.GenBank(genE_naccesion)
+# Lista de numeros de acceso
+
+ids <- Gen_E$N_Accesion
+
+# Busqueda de las secuencas por medio de sus numero de accseso
+
+genE_sequences <- read.GenBank(ids)
 
 genE_sequences_ids <- paste(attr(genE_sequences, "species"), names(genE_sequences), sep = "_")
 
-write.dna(genE_sequences, file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE_bd2016/genE_secuencias.fas", format = "fasta", nbcol = 6)
+# Guardando las secuencias 
 
-genE_seq_format <- read.fasta(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE_bd2016/genE_secuencias.fas", seqtype = "DNA", as.string = T)
-
-write.fasta(sequences = genE_seq_format, names = genE_sequences_ids, file.out = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE_bd2016/genE_secuencias_total.fasta")
+write.fasta(sequences = genE_sequences, names = genE_sequences_ids, file.out = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/Gen_E.fasta")
 
