@@ -2,6 +2,15 @@
 #                      Estadisticas de la base de datos                ##
 #########################################################################
 
+# Leer el archivo con la base de datos 
+datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv", stringsAsFactors = F)
+
+# Extraigo solo los datos que tiene genoma completo
+Complete_genome <- datos[which(datos$Gene=="Complete_Genome"),7]
+
+plot(Complete_genome)
+
+
 ## Datos del gen E con Pais, localidad y año, sin Nas ####
 ##########################################################
 
