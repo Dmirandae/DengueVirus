@@ -23,10 +23,16 @@ ID <- ID[-c(103, 163, 164, 165)]
 # NOTA : LA SECUENCIA 671 Y LA 1059:1062, 1081, 1737, 3311, 3313:3327, 3369, 3553, 3554, 3769, 3838:1840, 3883:3885, 
 # 3892,3893, 3915, 3988:3990(clones) PRESENTÓ PROBLEMAS PARA DESCARGARSE PORQUE EN EL GENBANK NO SE ESPECIFICA EL CDS,
 # ASI QUE ME SALTE ESA SECUENCIA.
+# NO REPORTA CDS
+# EU920839, KC131141, KC131140, HM631854, "HM631853" "HM631852" "HM631851", "HM631855", 
+# FJ913015, JQ045685
+# JQ045683, JQ045682, JQ045681, "JQ045680" "JQ045679" "JQ045678" "JQ045677" "JQ045676"
+# "JQ045675" "JQ045674" "JQ045673" "JQ045672" "JQ045671" "JQ045669"
+# JQ045627, 
 
 # Patición para correr por partes
 
-ID <- ID[1:300]
+ID <- ID[1:5]
 ID <- ID[501:1000]  
 ID <- ID[1001:1500] 
 ID <- ID[1501:2000]
@@ -58,18 +64,11 @@ Gen_E <- datos[datos$Gene=="E" & datos$Size_sequence>1300 & datos$Size_sequence<
 # Lista de numeros de acceso
 
 ids <- Gen_E$N_Accesion
-str(ids)
-ids <- ids[1:3000]
-ids <- as.list(ids)
-?read.GenBank()
-id <- c("KJ651912" ,"KU291816", "KU291815", "KU291814" ,"KU291813" ,"KU291812")
-class(id)
 
 # Busqueda de las secuencas por medio de sus numero de accseso
 
-genE_sequences <- read.GenBank(id)
-toma<-read.GenBank("JF806202", as.character = T)
-seq_1_DNAbin <- read.GB("JF806202") 
+genE_sequences <- read.GenBank(ids[1])
+
 genE_sequences_ids <- paste(attr(genE_sequences, "species"), names(genE_sequences), sep = "_")
 
 # Guardando las secuencias 
