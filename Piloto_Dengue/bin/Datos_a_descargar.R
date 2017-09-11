@@ -9,28 +9,40 @@
 datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv", stringsAsFactors = F)
 
 # Extraigo solo los datos que tiene genoma completo
-Complete_genome <- datos[which(datos$Gene=="Complete_Genome" & datos$Size_sequence>10100 & datos$Size_sequence<11000),]
+Complete_genome_1 <- datos[which(datos$Gene=="Complete_Genome" & datos$Size_sequence>10100),]
 
 # Lista de numeros de acceso
 ID <- Complete_genome$N_Accesion
 
-# Presenta problemas con la secuencia 103, 163, 164 y 165 la elimine de los datos 
-# para ver si es solo esa y poder a vanzar, observe que el problema con estas secuencias
-# es que no tiene como tal un numero de acceso si no que se reporta se numero de gb asi:
-#  "NC_002640" "NC_001474" "NC_001477" "NC_001475" respectivamente
-ID <- ID[-c(103, 163, 164, 165)]
+----------------------------------------------------------------------------------------------------
+# Estas secuencias fueron descargadas usando la funcion escrita por Viviana Romero-Alarcon 
+# en el codigo downloadCDSgb.R 
+# ejecutado con el codigo CDS_dowland_genbank.R 
+# https://github.com/alarconvv/download.CDS.GenBank  
+  
+  
+#Algunas secuencias no se descargaron por alguna de las sifuientes razones:
 
-# NOTA : LA SECUENCIA 671 Y LA 1059:1062, 1081, 1737, 3311, 3313:3327, 3369, 3553, 3554, 3769, 3838:1840, 3883:3885, 
-# 3892,3893, 3915, 3988:3990(clones) PRESENTÓ PROBLEMAS PARA DESCARGARSE PORQUE EN EL GENBANK NO SE ESPECIFICA EL CDS,
-# ASI QUE ME SALTE ESA SECUENCIA.
+# No se reporta el CDS en el GenBank
+# No se reporta un numero de acceso, solo se reporta el numero gb y este numero no esreconocido por el código
+# Tiene una longitud menor a 1100 pb
+# Estan etiquetadas por el Gen Bnak como clon, quimera, inverificada
+# No reporta el serotipo al que pertenece
+
+# No tiene como tal un numero de acceso si no que se reporta se numero de gb asi:
+#  "NC_002640" "NC_001474" "NC_001477" "NC_001475" 
+
 # NO REPORTA CDS
 # EU920839, KC131141, KC131140, HM631854, "HM631853" "HM631852" "HM631851", "HM631855", 
-# FJ913015, JQ045685
-# JQ045683, JQ045682, JQ045681, "JQ045680" "JQ045679" "JQ045678" "JQ045677" "JQ045676"
-# "JQ045675" "JQ045674" "JQ045673" "JQ045672" "JQ045671" "JQ045669"
-# JQ045627, 
+# FJ913015, JQ045685, JQ045683, JQ045682, JQ045681, "JQ045680" "JQ045679" "JQ045678" "JQ045677" 
+# "JQ045676", "JQ045675" "JQ045674" "JQ045673" "JQ045672" "JQ045671" "JQ045669"
+# JQ045627, M87512, EU179861, EU179860, FJ177308
 
-# Patición para correr por partes
+# Clones
+# FJ828987, FJ828986, AY145122, AY145121, AY145123, U88537, U88536, U88535, AB543624
+# AF375822, AF326827, AF326826, AF326825, DQ285561,
+----------------------------------------------------------------------------------------------------
+# Patición para correr por partes. 
 
 ID <- ID[1:5]
 ID <- ID[501:1000]  
@@ -67,11 +79,10 @@ ids <- Gen_E$N_Accesion
 
 # Busqueda de las secuencas por medio de sus numero de accseso
 
-genE_sequences <- read.GenBank(ids[1])
+genE_sequences <- read.GenBank(ids)
 
 genE_sequences_ids <- paste(attr(genE_sequences, "species"), names(genE_sequences), sep = "_")
 
 # Guardando las secuencias 
 
-write.fasta(sequences = genE_sequences, names = genE_sequences_ids, file.out = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/Gen_E.fasta")
-
+write.dna(genE_sequences,"/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/Gen_E.fasta", format = "fasta")
