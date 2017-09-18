@@ -40,7 +40,7 @@ ater <- c("title", "organism", "extra", "caption", "slen", "subname")
 #subname: describe a subtype
 
 # obtener informacion adicional que describí en el vector anterior
-ejm_1 <- extract_from_esummary(dengue_summs_111,ater, simplify = T)
+ejm_1 <- extract_from_esummary(dengue_summs_1,ater, simplify = T)
 unname(ejm)
 
 # Bucle para poner toda la informacion en un dataframe 
