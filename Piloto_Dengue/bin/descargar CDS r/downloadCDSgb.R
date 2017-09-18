@@ -34,22 +34,22 @@ downloadCDSgb<-function(No.Accesion= NULL,save.fasta=NULL ){
     choosebank("genbank")
     gb <- query("gb", paste('N=',No.Accesion[i],sep=''))
     annotations <- getAnnot(gb$req[[1]])
-    cds<-grep(pattern ='CDS',annotations )
-    cds<-sub(pattern ='*CDS. *',replacement = '',annotations[cds])
-    cds<-gsub("[[:space:]]",'',cds)
-    initial<-strsplit(gsub("[..]",' ',cds),split =' ')[[1]][1]
-    final<-strsplit(gsub("[..]",' ',cds),split =' ')[[1]][3]
-    closebank()
-    seque<-read.GenBank(access.nb = No.Accesion[i],
-                        species.names = T,gene.names = F,
-                        as.character = T)
-    seque[[1]]<-seque[[1]][initial:final]
-    name.sp<-as.character(attr(seque,'species'))
-    name.id<-as.character(names(seque))
-    names(seque)<-paste(name.sp,name.id,sep='_')
-    cat.seque<-paste(seque[[1]],collapse ='' )
-    writeLines(paste('>',names(seque),sep=''),out,sep='\n')
-    writeLines(cat.seque,out,sep='\n')
+      cds<-grep(pattern ='CDS',annotations )
+      cds<-sub(pattern ='*CDS. *',replacement = '',annotations[cds])
+      cds<-gsub("[[:space:]]",'',cds)
+      initial<-strsplit(gsub("[..]",' ',cds),split =' ')[[1]][1]
+      final<-strsplit(gsub("[..]",' ',cds),split =' ')[[1]][3]
+      closebank()
+      seque<-read.GenBank(access.nb = No.Accesion[i],
+                          species.names = T,gene.names = F,
+                          as.character = T)
+      seque[[1]]<-seque[[1]][initial:final]
+      name.sp<-as.character(attr(seque,'species'))
+      name.id<-as.character(names(seque))
+      names(seque)<-paste(name.sp,name.id,sep='_')
+      cat.seque<-paste(seque[[1]],collapse ='' )
+      writeLines(paste('>',names(seque),sep=''),out,sep='\n')
+      writeLines(cat.seque,out,sep='\n')
   }
   close(out) 
 }
