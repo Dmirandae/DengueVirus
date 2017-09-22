@@ -11,18 +11,19 @@ No.Accesion <- c("JX649147", "M84727", "EU920839", "HM181978", "HM181977", "HM18
          "M14931", "M84728", "M19197", "M20558", "M29095")
 # Los ID son especificados en el script Datos_a_descargar.R
 ID <- "M93130"
+ID <-"M84727"
 No.Accesion <- "EU920839"
 No.Accesion <- "JX649147"
 
 for(i in 1:length(ID)){
-  if(nchar(ID[i])!=8){
-    write(paste("Access number not avaible"), file = paste(ID[i],".fasta", sep = ""))
-    print(paste("access code:",i, ID[i], "not avaible", sep = " "))
-  }else{
+  # if(nchar(ID[i])!=8){
+    # write(paste("Access number not avaible"), file = paste(ID[i],".fasta", sep = ""))
+    # print(paste("access code:",i, ID[i], "not avaible", sep = " "))
+  # }else{
     downloadCDSgb(No.Accesion = ID[i],save.fasta = paste(ID[i],".fasta", sep = ""))
     print(paste("access code:",i, ID[i], "dowloaded", sep = " "))
     Sys.sleep(1)
-  }
+  # }
 }
 
 for (i in 1:length(No.Accesion)){
