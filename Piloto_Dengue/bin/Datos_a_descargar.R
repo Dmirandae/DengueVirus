@@ -41,9 +41,9 @@ Complete_genome <- datos[which(datos$Gene=="Complete_Genome" & datos$Size_sequen
 # Lista de numeros de acceso
 ID <- Complete_genome$N_Accesion
 
-which(ID=="FJ850086")
-No.Accesion <-ID[2001:3916]
-ID[2001]
+which(ID=="AJ487271")
+No.Accesion <-ID[3893:3916]
+ID[3893]
 length(ID)
 ----------------------------------------------------------------------------------------------------
 # Estas secuencias fueron descargadas usando la funcion escrita por Viviana Romero-Alarcon 
