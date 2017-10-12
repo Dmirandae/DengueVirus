@@ -1,0 +1,526 @@
+---
+title: "Base de datos del virus del Dengue"
+output: html_notebook
+---
+
+Estas graficas describen la base de datos del virus del Dengue "bd_Dengue", que cuenta con la informacion recopilada del GenBank para todos los casos de Dengue registrados en esta plataforma hasta septiembre del 2016. Para mas informacion sobre que herramientas se usaron para crear la base de datos y sobre el contenido de sus variables leer en  "https://gitlab.com/AndreaSilva/LSB/tree/master/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue" el archivo README.md
+
+### Estructura de la base de datos ###
+
+
+```{r, echo = FALSE}
+
+# Leer el archivo con la base de datos 
+datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv", stringsAsFactors = F)
+
+number_data <- length(datos$N_Accesion)
+
+print(paste("Numero Total de Datos:", number_data))
+
+demo_bd <- head(datos)
+
+print(demo_bd)
+
+```
+
+La base de datos cuenta con 18.389 registros, que se describen en 20 variables.
+
+
+.
+
+
+### Frecuencia de serotipos ###
+
+
+```{r, echo = FALSE, fig.height=6, fig.width=6}
+
+D_0 <- length(datos[datos$Serotype=="DENV",4])
+D_1 <- length(datos[datos$Serotype=="DENV_1",4])
+D_2 <- length(datos[datos$Serotype=="DENV_2",4])
+D_3 <- length(datos[datos$Serotype=="DENV_3",4])
+D_4 <- length(datos[datos$Serotype=="DENV_4",4])
+UNV <- length(datos[datos$Serotype=="UNVERIFIED",4])
+Chi <- length(datos[datos$Serotype=="Chimeric",4])
+Clon <- length(datos[datos$Serotype=="Clone",4])
+
+
+count_data <- c(Chi, Clon, D_0, D_1, D_2, D_3, D_4, UNV)
+
+Name_serotype <- sort(unique(datos$Serotype))
+
+serotype <- data.frame(count_data, Name_serotype)
+
+library("ggplot2")
+
+plot_serotype <- ggplot(data = serotype[3:7,], aes(x= Name_serotype, y = count_data))+
+  geom_bar(stat = "identity", fill="steelblue")+
+  labs(x= "Serotypes", y= "Data Number")+
+  theme_minimal()
+
+plot_serotype
+
+```
+Numero de datos existente en la base de datos por cada serotipo. El mayor numero de registros son del serotipo 1.
+
+
+
+.
+
+
+
+### Frecuencia de seroptipos, clones, quimeras, y datos no verificados ###
+
+
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+p <- ggplot(data = serotype, aes(x= Name_serotype, y = count_data))+
+  geom_bar(stat = "identity", fill="steelblue")+
+  labs(x= "", y= "Data Number")+
+  theme_minimal()
+
+p
+```
+Frecuencias de datos que estan designadas por el GenBank como quimeras, clones y no verificados. Y se comparara con la frecuencias que tiene cada serotipo.
+
+
+.
+
+
+
+### Frecuencia de Genes ###
+
+```{r, fig.width = 12, fig.height = 12, echo = FALSE}
+library(forcats)
+library("RColorBrewer")
+
+Genes <- as.character(unique(datos$Gene))
+
+Genes.length <- data.frame()
+
+for(i in 1:length(Genes)){
+  Genes.length[i,"gene_name"] <- Genes[i]
+  Genes.length[i,"gene_count"] <- length(datos[which(datos$Gene==Genes[i]),6])
+  Genes.length[12,"gene_count"] <- length(which(is.na(datos$Gene)==T))
+}
+
+Genes.length <- transform(Genes.length, gene_name= reorder(gene_name, +gene_count))
+ggplot(data = Genes.length, aes(x = gene_name, y = gene_count, color=gene_name)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Gene", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+
+Frecuencia de los genes: Gen E y Genoma Completo presentan mayor numero de datos.
+
+
+.
+
+
+
+### Pais y Localidad ###
+
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+
+
+Data <- c("Country", "Country", "Location", "Location")
+type <- c("data_yes", "data_NA", "data_yes", "data_NA")
+# datos que no son NA / datos que si son NA
+Data_Number <- c(length(which(is.na(datos$Country)==F)), length(which(is.na(datos$Country)==T)),
+                 length(which(is.na(datos$Location)==F)), length(which(is.na(datos$Location)==T))
+                 )
+
+
+data_country <- data.frame(type, Data,Data_Number)
+
+ggplot(data = data_country, aes(x=Data , y = Data_Number, fill=type))+
+  geom_bar(stat = "identity", position=position_dodge())+
+  scale_colour_brewer()+
+  theme_minimal()
+
+
+
+```
+La mayoria de los datos reportan su pais pero no su localidad. Alrededor de la mitad del total de datos no reporta su localidad.
+
+Izquierda: Numero de datos que no reportan su pais Vs Numero de datos que si reportan su pais.
+Derecha: Numero de datos que no reporan su localidad Vs Numero de datos que si reportan su locaidad.
+
+
+.
+
+
+### Frecuencia de Paises ###
+
+```{r, fig.width = 12, fig.height = 12, echo = FALSE}
+Country_names <- unique(datos$Country)
+
+
+country.length <- data.frame()
+
+for(i in 1:length(Country_names)){
+  country.length[i,"Country_names"] <- Country_names[i]
+  country.length[i, "number_cases"] <- length(datos[which(datos$Country==Country_names[i]),8])
+  country.length[37, "number_cases"] <- length(which(is.na(datos$Country)==T))
+}
+
+country.length <- transform(country.length, Country_names= reorder(Country_names, +number_cases))
+ggplot(data = country.length, aes(x = Country_names, y = number_cases, color=Country_names)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Country", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  theme(legend.position="none")+
+  coord_flip()
+```
+En la base de datos se reportan 110 paises con casos de Dengue, siendo VietNam, Brasil y Tailandia los paises con mas casos reportados en la base de datos. El numero de registros que no reportan el lugar es alto (> 2000). 
+
+
+.
+
+
+### Mapamundi: Numero de casos reportados por paises  ###
+
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+# Frecuencia de los paises con sus respectivas coordenadas
+# SIN DISCRIMMINAR POR SEROTIPOS
+
+library(rworldmap)
+library(ggplot2)
+
+fre.country <- data.frame()
+
+for(i in 1:length(Country_names)){
+  fre.data <- datos[which(datos$Country == Country_names[i]),]
+  fre.country[i,"Country_names"] <- Country_names[i]
+  fre.country[i,"lat"] <- fre.data$lat_country[1]
+  fre.country[i,"lon"] <- fre.data$lon_country[1]
+  fre.country[i, "number_cases"] <- length(fre.data$Country)
+}
+
+fre.country <- na.omit(fre.country)
+
+# GRAFICA MAPA-MUNDI SIN DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+pf <- ggplot()+ 
+  #theme(legend.position="none")+
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= fre.country, aes(x=lon, y=lat, size=number_cases), color="coral1" , alpha=0.5)+
+  scale_size(name="Number of cases")
+
+pf
+
+```
+Numeros de casos del virus del Dengue por paises. El tamaño del circulo indica el numero de casos reportados para ese pais en la base de datos.
+
+.
+
+
+
+### Distribucion de los serotipos en el mundo ###
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+
+library(rworldmap)
+library(ggplot2)
+
+Country_names <- na.omit(unique(datos$Country))
+
+# Frecuencia de los serotipos en los paises registrados: 
+
+# SEROTIPO 1
+
+data.mundi1 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- datos[which(datos$Serotype == "DENV_1" & datos$Country == Country_names[i]),]
+  data.mundi1[i, "Serotipe"] <- mini.data$Serotype[1]
+  data.mundi1[i,"Country_names"] <- Country_names[i]
+  data.mundi1[i,"lat"] <- mini.data$lat_country[1]
+  data.mundi1[i,"lon"] <- mini.data$lon_country[1]
+  data.mundi1[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 2
+
+data.mundi2 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- datos[which(datos$Serotype == "DENV_2" & datos$Country == Country_names[i]),]
+  data.mundi2[i, "Serotipe"] <- mini.data$Serotype[1]
+  data.mundi2[i,"Country_names"] <- Country_names[i]
+  data.mundi2[i,"lat"] <- mini.data$lat_country[1]
+  data.mundi2[i,"lon"] <- mini.data$lon_country[1]
+  data.mundi2[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 3
+
+data.mundi3 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- datos[which(datos$Serotype == "DENV_3" & datos$Country == Country_names[i]),]
+  data.mundi3[i, "Serotipe"] <- mini.data$Serotype[1]
+  data.mundi3[i,"Country_names"] <- Country_names[i]
+  data.mundi3[i,"lat"] <- mini.data$lat_country[1]
+  data.mundi3[i,"lon"] <- mini.data$lon_country[1]
+  data.mundi3[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 4
+
+data.mundi4 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- datos[which(datos$Serotype == "DENV_4" & datos$Country == Country_names[i]),]
+  data.mundi4[i, "Serotipe"] <- mini.data$Serotype[1]
+  data.mundi4[i,"Country_names"] <- Country_names[i]
+  data.mundi4[i,"lat"] <- mini.data$lat_country[1]
+  data.mundi4[i,"lon"] <- mini.data$lon_country[1]
+  data.mundi4[i, "number_cases"] <- length(mini.data$Country)
+}
+
+data.mundi <- rbind(data.mundi1,data.mundi2,data.mundi3,data.mundi4)
+data.mundi <- na.omit(data.mundi)
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+pg <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= data.mundi, aes(x=lon, y=lat, color=Serotipe),size=1.5, alpha=0.5)
+```
+Mapa mundi de la distribucion de los cuatro serotipos.
+
+
+.
+
+
+
+### Distribucion de cada serotipo ###
+
+
+```{r, fig.width = 7, fig.height = 17, echo = FALSE}
+# mapa-mindi por casa serotipo
+
+data.mundi1 <- na.omit(data.mundi1)
+
+p1 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= data.mundi1, aes(x=lon, y=lat),color="deeppink", size=1.5, alpha=0.5)+
+  ggtitle("DENV 1") +
+  geom_jitter(width = 10, height = 10)
+
+data.mundi2 <- na.omit(data.mundi2)
+
+p2 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= data.mundi2, aes(x=lon, y=lat),color="green3", size=1.5, alpha=0.5)+
+  ggtitle("DENV 2") +
+  geom_jitter(width = 10, height = 10)
+
+data.mundi3 <- na.omit(data.mundi3)
+
+p3 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= data.mundi3, aes(x=lon, y=lat),color="mediumblue", size=1.5, alpha=0.5)+
+  ggtitle("DENV 3") +
+  geom_jitter(width = 10, height = 10)
+
+data.mundi4 <- na.omit(data.mundi4)
+
+p4 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= data.mundi4, aes(x=lon, y=lat),color="purple", size=1.5, alpha=0.5)+
+  ggtitle("DENV 4") +
+  geom_jitter(width = 10, height = 10)
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+multiplot(p1, p2, p3, p4, cols=1)
+```
+
+Distribucion de los cuatro serotipos por separado en el mundo.
+
+.
+
+
+### Localidades ###
+
+```{r, echo = FALSE, fig.width=9, fig.height=5}
+#location <- which(is.na(datos$Location)==F)
+#length(location)
+
+#names_location <- unique(datos[which(is.na(datos$Location)==F),9])
+#length(names_location)
+
+# Unir el nombre de la localidad con su pais corespondiente y lo guardamos en un nuevo
+# vector llamada 
+
+#location_country_all <- vector()
+
+#for(i in 1:length(location)){
+#  location_country_all[i] <- paste(datos$Location[location[i]],",",datos$Country[location[i]], sep = "")
+#}
+
+#length(location_country_all)
+
+#location_country <- unique(location_country_all)
+#length(location_country)
+
+#location.length <- data.frame()
+
+#for(i in 1:length(names_location)){
+#  location.length[i,"location_names"] <- location_country[i]
+#  location.length[i, "number_cases"] <- length(datos[which(datos$Location==names_location[i]),9])
+#  location.length[429, "number_cases"] <- length(which(is.na(datos$Location)==T))
+#}
+
+#location.length <- transform(location.length, location_names= reorder(location_names, +number_cases))
+#ggplot(data = location.length, aes(x = location_names, y = number_cases, color=location_names)) +
+#  geom_bar(stat = "identity", fill="white")+
+#  scale_color_grey(start= 0.7, end=0.1)+
+#  theme_classic()+
+#  theme(legend.position="none")+
+#  coord_flip()
+
+
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library("RColorBrewer")
+
+location <- datos[which(is.na(datos$Location)==F),9]
+
+location <- gsub(" ", "", location)
+
+locorpus <- Corpus(VectorSource(location))
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+locorpus <- tm_map(locorpus, toSpace, "/")
+locorpus <- tm_map(locorpus, toSpace, "-")
+locorpus <- tm_map(locorpus, toSpace, "--")
+
+locorpus <- tm_map(locorpus, content_transformer(tolower))
+
+locorpus <- tm_map(locorpus, removeNumbers)
+
+locorpus <- tm_map(locorpus, removeWords, stopwords('english'))
+
+locorpus <- tm_map(locorpus, removeWords, c("blabla1", "blabla2")) 
+
+locorpus <- tm_map(locorpus, removePunctuation)
+
+locorpus <- tm_map(locorpus, stripWhitespace)
+
+dtm <- TermDocumentMatrix(locorpus)
+lomax <- as.matrix(dtm)
+vcation <- sort(rowSums(lomax),decreasing=TRUE)
+loframe <- data.frame(word = names(vcation),freq=vcation)
+
+
+#set.seed(1234)
+#wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,.5), min.freq = 2,
+#          max.words=2000, random.order=FALSE, rot.per=0.35,
+#          colors=brewer.pal(11, "RdYlGn"))
+
+
+wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,.5), min.freq = 2,
+          max.words=2000, random.order=FALSE, rot.per=0.45,
+          colors=brewer.pal(12, "Paired"))
+
+
+```
+Nube de palabras de las Localidades reportadas en la base de datos. Las localidades que mas se han reportado en la base de datos son: sur de vietnam (VietNam), bangkok (Tailandia), Managua (Brasil), Aragua (Brasil), Sao Paulo (Brasil), Provincia de Kamphaeng Phet (Tailandia), Guangzhou (China). Y se corresponden con el grafico de la frecuencia de paises.
+
+
+.
+
+
+
+### Años ###
+
+```{r, fig.width = 12, fig.height = 12, echo = FALSE}
+years <- unique(datos$Year)
+
+count_years <- data.frame()
+
+for(i in 1:length(years)){
+  count_years[i, "Year"] <- years[i]
+  count_years[i, "number_year"] <- length(datos[which(datos$Year==years[i]),10])
+  count_years[8, "number_year"] <- length(which(is.na(datos$Year)==T))
+}
+
+count_years <- transform(count_years, Year= reorder(Year, -number_year))
+ggplot(data = count_years, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+Frecuencia de los años registrados en la base de datos, siendo el registro mas antiguo del ano 1600, y el mas reciente del ano 2016, cabe recordar que la base de datos fue descargada en el 2016 por lo cual es muy probable que los datos que se tienen de los años 2015 y 2016 no sean la misma cantidad con la que se cuente en este momento para esos años. 
+
+.
+
+### Pais, localidad y año ###
+
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+
+Data_Number <- c(length(which(is.na(datos$Country)==F)),length(which(is.na(datos$Location)==F)),                     length(which(is.na(datos$Country)==F & is.na(datos$Year)==F)),                                      length(which(is.na(datos$Country)==F & is.na(datos$Location)==F &                                   is.na(datos$Year)==F)) 
+                 )
+
+Data <- c("Country", "Country_Location", "Country_year", "Country_location_year")
+
+Coloye <- data.frame(Data, Data_Number)
+
+ggplot(data = Coloye, aes(x= Data, y = Data_Number))+
+  geom_bar(stat = "identity", fill="steelblue4")+
+  theme_minimal()
+
+```
+
+Frecuencia de los datos que contiene 1. Reportado el pais, 2. Reportado pais y localidad, 3. Reportado pais, localidad y ano, 4. Reportado pais y ano.
+
+
