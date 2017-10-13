@@ -85,6 +85,40 @@ Frecuencias de datos que estan designadas por el GenBank como quimeras, clones y
 .
 
 
+### Años de casos que no reportan el serotipo (DENV) ###
+
+
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+
+DENV <- datos[datos$Serotype=="DENV",]
+years <- unique(DENV$Year)
+
+years_denv <- data.frame()
+
+for(i in 1:length(years)){
+  years_denv[i, "Year"] <- years[i]
+  years_denv[i, "number_year"] <- length(DENV[which(DENV$Year==years[i]),10])
+  years_denv[1, "number_year"] <- length(which(is.na(DENV$Year)==T))
+}
+
+years_denv <- transform(years_denv, Year= reorder(Year, -number_year))
+
+ggplot(data = years_denv, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Number of Registers")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  theme(legend.position="none")+
+  ggtitle("Years frecuency for DENV without serotype reported")+
+  coord_flip()
+
+```
+
+
+
+.
+
+
 
 ### Frecuencia de Genes ###
 
