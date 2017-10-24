@@ -23,7 +23,7 @@ print(demo_bd)
 
 ```
 
-La base de datos cuenta con 18.389 registros, que se describen en 20 variables.
+**Tabla 1.** La base de datos tiene 18.389 registros, que se describen en 20 variables, en las cuales hay informacion sobre el Numero de Aceso, Serotipo, genotipo, asi como el pais, localidad (coordenadas) y año en que fueron reportados los casos.
 
 
 .
@@ -60,9 +60,7 @@ plot_serotype <- ggplot(data = serotype[3:7,], aes(x= Name_serotype, y = count_d
 plot_serotype
 
 ```
-Numero de datos existente en la base de datos por cada serotipo. El mayor numero de registros son del serotipo 1.
-
-
+**Figura 1.** Numero de datos en la base de datos por cada serotipo. La base de datos tiene mayor numero de casos reportados del serotipo 1, seguido del serotipo 2, 3 y 4 respectivamente. Tambien en la base de datos hay 428 casos en los que no se reporta su serotipo (DENV).
 
 .
 
@@ -79,48 +77,14 @@ p <- ggplot(data = serotype, aes(x= Name_serotype, y = count_data))+
 
 p
 ```
-Frecuencias de datos que estan designadas por el GenBank como quimeras, clones y no verificados. Y se comparara con la frecuencias que tiene cada serotipo.
-
-
-.
-
-
-### Años de casos que no reportan el serotipo (DENV) ###
-
-
-```{r, echo = FALSE, fig.width=10, fig.height=6}
-
-DENV <- datos[datos$Serotype=="DENV",]
-years <- unique(DENV$Year)
-
-years_denv <- data.frame()
-
-for(i in 1:length(years)){
-  years_denv[i, "Year"] <- years[i]
-  years_denv[i, "number_year"] <- length(DENV[which(DENV$Year==years[i]),10])
-  years_denv[1, "number_year"] <- length(which(is.na(DENV$Year)==T))
-}
-
-years_denv <- transform(years_denv, Year= reorder(Year, -number_year))
-
-ggplot(data = years_denv, aes(x = Year, y = number_year, color=Year)) +
-  geom_bar(stat = "identity", fill="white")+
-  labs(x= "Year", y= "Number of Registers")+
-  scale_color_grey(start= 0.7, end=0.1)+
-  theme_classic()+
-  theme(legend.position="none")+
-  ggtitle("Years frecuency for DENV without serotype reported")+
-  coord_flip()
-
-```
-
+**Figura 2.**Frecuencias de los casos que estan designadas por el GenBank como quimeras (11), clones (651) y no verificados (47). Y se comparara con la frecuencias que tiene cada serotipo.
 
 
 .
 
 
 
-### Frecuencia de Genes ###
+### ¿Que gen o genes contienen los casos reportados? ###
 
 ```{r, fig.width = 12, fig.height = 12, echo = FALSE}
 library(forcats)
@@ -147,7 +111,7 @@ ggplot(data = Genes.length, aes(x = gene_name, y = gene_count, color=gene_name))
 
 ```
 
-Frecuencia de los genes: Gen E y Genoma Completo presentan mayor numero de datos.
+**Figura 3.** Frecuencia de los genes: La mayoria de los casos reportados son secuencias del "Gen E" y "Genoma Completo", seguidos de secuencias de "gen de poliproteína" que son secuencias que tienen mas de un gen pero que en el GenBank no se especifica cuales son. De los genes no estrulturales el gen no estructural 1 "NS1" es el que mas casos tiene.
 
 
 .
@@ -177,7 +141,7 @@ ggplot(data = data_country, aes(x=Data , y = Data_Number, fill=type))+
 
 
 ```
-La mayoria de los datos reportan su pais pero no su localidad. Alrededor de la mitad del total de datos no reporta su localidad.
+**Figura 4.** La mayoria de los datos reportan su pais pero no su localidad. Alrededor de la mitad del total de datos no reporta su localidad.
 
 Izquierda: Numero de datos que no reportan su pais Vs Numero de datos que si reportan su pais.
 Derecha: Numero de datos que no reporan su localidad Vs Numero de datos que si reportan su locaidad.
@@ -186,7 +150,7 @@ Derecha: Numero de datos que no reporan su localidad Vs Numero de datos que si r
 .
 
 
-### Frecuencia de Paises ###
+### Numero de casos reportados por paises ###
 
 ```{r, fig.width = 12, fig.height = 12, echo = FALSE}
 Country_names <- unique(datos$Country)
@@ -209,13 +173,14 @@ ggplot(data = country.length, aes(x = Country_names, y = number_cases, color=Cou
   theme(legend.position="none")+
   coord_flip()
 ```
-En la base de datos se reportan 110 paises con casos de Dengue, siendo VietNam, Brasil y Tailandia los paises con mas casos reportados en la base de datos. El numero de registros que no reportan el lugar es alto (> 2000). 
+**Figura 5.** En la base de datos se reportan 110 paises con casos de Dengue, siendo VietNam, Brasil y Tailandia los paises con mas casos reportados en la base de datos. 
+El numero de casos que no reportan el pais es mayor a 2000. 
 
 
 .
 
 
-### Mapamundi: Numero de casos reportados por paises  ###
+### Mapa-Mundi: Numero de casos reportados por paises  ###
 
 ```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
 # Frecuencia de los paises con sus respectivas coordenadas
@@ -249,14 +214,14 @@ pf <- ggplot()+
 pf
 
 ```
-Numeros de casos del virus del Dengue por paises. El tamaño del circulo indica el numero de casos reportados para ese pais en la base de datos.
+**Figura 6.** Mapa-mundo de numero de casos reportados por paises. El tamaño del circulo indica el numero de casos reportados. Esta grafica al igual que la **Figura 5.** muestra que VietNam, China, India, Brasil, Tailandia son los paises con mayor numero de casos reportados.
 
 .
 
 
 
 ### Distribucion de los serotipos en el mundo ###
-```{r, echo = FALSE, fig.width=10, fig.height=6}
+```{r, echo = FALSE, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
 
 library(rworldmap)
 library(ggplot2)
@@ -317,7 +282,23 @@ for(i in 1:length(Country_names)){
   data.mundi4[i, "number_cases"] <- length(mini.data$Country)
 }
 
-data.mundi <- rbind(data.mundi1,data.mundi2,data.mundi3,data.mundi4)
+# SIN SEROTIPO (DENV)
+
+mundi1 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- datos[which(datos$Serotype == "DENV" & datos$Country == Country_names[i]),]
+  mundi1[i, "Serotipe"] <- mini.data$Serotype[1]
+  mundi1[i,"Country_names"] <- Country_names[i]
+  mundi1[i,"lat"] <- mini.data$lat_country[1]
+  mundi1[i,"lon"] <- mini.data$lon_country[1]
+  mundi1[i, "number_cases"] <- length(mini.data$Country)
+}
+
+mundi1 <- na.omit(mundi1)
+
+
+data.mundi <- rbind(data.mundi1,data.mundi2,data.mundi3,data.mundi4, mundi1)
 data.mundi <- na.omit(data.mundi)
 
 # GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
@@ -326,26 +307,29 @@ map.world <- map_data(map="world")
 
 pg <- ggplot()+ 
   geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
-  geom_point(data= data.mundi, aes(x=lon, y=lat, color=Serotipe),size=1.5, alpha=0.5)
-```
-Mapa mundi de la distribucion de los cuatro serotipos.
+  ggtitle("Localidades reportadas")+
+  geom_point(data= data.mundi, aes(x=lon, y=lat, color=Serotipe),size=1.5, alpha=0.5)+
+  scale_color_manual(values=c("deeppink","green3","turquoise3","mediumblue","purple"))
 
+pg
+```
+**Figura 7.** Mapa-mundi de la distribucion global por paises de los cuatro serotipos. Los cuatro serotipos se encuentran distribuidos por toda la region tropical del mundo.
 
 .
 
 
 
-### Distribucion de cada serotipo ###
+### Distribucion global de cada serotipo ###
 
 
-```{r, fig.width = 7, fig.height = 17, echo = FALSE}
+```{r, fig.width = 7, fig.height = 20, echo = FALSE, message=FALSE, warning=FALSE}
 # mapa-mindi por casa serotipo
 
 data.mundi1 <- na.omit(data.mundi1)
 
 p1 <- ggplot()+ 
   geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
-  geom_point(data= data.mundi1, aes(x=lon, y=lat),color="deeppink", size=1.5, alpha=0.5)+
+  geom_point(data= data.mundi1, aes(x=lon, y=lat),color="green3", size=1.5, alpha=0.5)+
   ggtitle("DENV 1") +
   geom_jitter(width = 10, height = 10)
 
@@ -353,7 +337,7 @@ data.mundi2 <- na.omit(data.mundi2)
 
 p2 <- ggplot()+ 
   geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
-  geom_point(data= data.mundi2, aes(x=lon, y=lat),color="green3", size=1.5, alpha=0.5)+
+  geom_point(data= data.mundi2, aes(x=lon, y=lat),color="turquoise3", size=1.5, alpha=0.5)+
   ggtitle("DENV 2") +
   geom_jitter(width = 10, height = 10)
 
@@ -371,6 +355,12 @@ p4 <- ggplot()+
   geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
   geom_point(data= data.mundi4, aes(x=lon, y=lat),color="purple", size=1.5, alpha=0.5)+
   ggtitle("DENV 4") +
+  geom_jitter(width = 10, height = 10)
+
+p <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= mundi1, aes(x=lon, y=lat),color="deeppink", size=1.5, alpha=0.5)+
+  ggtitle("DENV") +
   geom_jitter(width = 10, height = 10)
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
@@ -410,53 +400,18 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 
 
-multiplot(p1, p2, p3, p4, cols=1)
+multiplot(p,p1, p2, p3, p4, cols=1)
 ```
 
-Distribucion de los cuatro serotipos por separado en el mundo.
+**Figura 8.** Distribucion de los cuatro serotipos por separado en el mundo. En esta grafica se puede apreciar mejor los paises en que se han reportado cada serotipo. Esta grafica tambien nos muestra que los casos no serotipificados (DENV) no pertenecen a un solo pais o region. Y que en Africa no hay mucha incidencia del serotipo 4 (DENV 4) en comparacion con los otros serotipos.
 
 .
+
 
 
 ### Localidades ###
 
 ```{r, echo = FALSE, fig.width=9, fig.height=5}
-#location <- which(is.na(datos$Location)==F)
-#length(location)
-
-#names_location <- unique(datos[which(is.na(datos$Location)==F),9])
-#length(names_location)
-
-# Unir el nombre de la localidad con su pais corespondiente y lo guardamos en un nuevo
-# vector llamada 
-
-#location_country_all <- vector()
-
-#for(i in 1:length(location)){
-#  location_country_all[i] <- paste(datos$Location[location[i]],",",datos$Country[location[i]], sep = "")
-#}
-
-#length(location_country_all)
-
-#location_country <- unique(location_country_all)
-#length(location_country)
-
-#location.length <- data.frame()
-
-#for(i in 1:length(names_location)){
-#  location.length[i,"location_names"] <- location_country[i]
-#  location.length[i, "number_cases"] <- length(datos[which(datos$Location==names_location[i]),9])
-#  location.length[429, "number_cases"] <- length(which(is.na(datos$Location)==T))
-#}
-
-#location.length <- transform(location.length, location_names= reorder(location_names, +number_cases))
-#ggplot(data = location.length, aes(x = location_names, y = number_cases, color=location_names)) +
-#  geom_bar(stat = "identity", fill="white")+
-#  scale_color_grey(start= 0.7, end=0.1)+
-#  theme_classic()+
-#  theme(legend.position="none")+
-#  coord_flip()
-
 
 library(tm)
 library(SnowballC)
@@ -504,12 +459,172 @@ wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,.5), min.freq =
 
 
 ```
-Nube de palabras de las Localidades reportadas en la base de datos. Las localidades que mas se han reportado en la base de datos son: sur de vietnam (VietNam), bangkok (Tailandia), Managua (Brasil), Aragua (Brasil), Sao Paulo (Brasil), Provincia de Kamphaeng Phet (Tailandia), Guangzhou (China). Y se corresponden con el grafico de la frecuencia de paises.
+**Figura 9.** Nube de Localidades reportadas en la base de datos. Las localidades que mas se han reportado en la base de datos son: sur de vietnam (VietNam), bangkok (Tailandia), Managua (Brasil), Aragua (Brasil), Sao Paulo (Brasil), Provincia de Kamphaeng Phet (Tailandia), Guangzhou (China). Y se corresponden con el grafico de la frecuencia de paises.
 
 
 .
 
+### Mapa mundi Localidades ###
+```{r, echo = FALSE, fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+location <- which(is.na(datos$Location)==F)
 
+names_location <- unique(datos[which(is.na(datos$Location)==F),9])
+
+
+# Unir el nombre de la localidad con su pais corespondiente y lo guardamos en un nuevo
+# vector llamada 
+
+location_country_all <- vector()
+
+for(i in 1:length(location)){
+  location_country_all[i] <- paste(datos$Location[location[i]],",",datos$Country[location[i]], sep = "")
+}
+
+
+location_country <- unique(location_country_all)
+
+
+# SIN SEROTIPO (DENV)
+
+SS <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- datos[which(datos$Serotype == "DENV" & datos$Location == names_location[i]),]
+  SS[i, "Serotype"] <- mini.data$Serotype[1]
+  SS[i,"location_names"] <- location_country[i]
+  SS[i, "lat"] <- mini.data$lat_location[1]
+  SS[i, "lon"] <- mini.data$lon_location[1]
+  SS[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SS <- na.omit(SS)
+
+# SEROTIPO 1
+
+S1 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- datos[which(datos$Serotype == "DENV_1" & datos$Location == names_location[i]),]
+  S1[i, "Serotype"] <- mini.data$Serotype[1]
+  S1[i,"location_names"] <- location_country[i]
+  S1[i, "lat"] <- mini.data$lat_location[1]
+  S1[i, "lon"] <- mini.data$lon_location[1]
+  S1[i, "number_cases"] <- length(mini.data$Location)
+}
+
+S1 <- na.omit(S1)
+
+# SEROTIPO 2
+
+S2 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- datos[which(datos$Serotype == "DENV_2" & datos$Location == names_location[i]),]
+  S2[i, "Serotype"] <- mini.data$Serotype[1]
+  S2[i,"location_names"] <- location_country[i]
+  S2[i, "lat"] <- mini.data$lat_location[1]
+  S2[i, "lon"] <- mini.data$lon_location[1]
+  S2[i, "number_cases"] <- length(mini.data$Location)
+}
+
+S2 <- na.omit(S2)
+
+# SEROTIPE 3
+
+S3 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- datos[which(datos$Serotype == "DENV_3" & datos$Location == names_location[i]),]
+  S3[i, "Serotype"] <- mini.data$Serotype[1]
+  S3[i,"location_names"] <- location_country[i]
+  S3[i, "lat"] <- mini.data$lat_location[1]
+  S3[i, "lon"] <- mini.data$lon_location[1]
+  S3[i, "number_cases"] <- length(mini.data$Location)
+}
+
+S3 <- na.omit(S3)
+
+# SEROTIPE 4
+
+S4 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- datos[which(datos$Serotype == "DENV_4" & datos$Location == names_location[i]),]
+  S4[i, "Serotype"] <- mini.data$Serotype[1]
+  S4[i,"location_names"] <- location_country[i]
+  S4[i, "lat"] <- mini.data$lat_location[1]
+  S4[i, "lon"] <- mini.data$lon_location[1]
+  S4[i, "number_cases"] <- length(mini.data$Location)
+}
+
+S4 <- na.omit(S4)
+
+mundi.location <- rbind(SS,S1,S2,S3,S4)
+
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= mundi.location, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  scale_color_manual(values=c("deeppink","green3","turquoise3","mediumblue","purple"))
+
+
+```
+**Figura 10.** Localidades reportadas para los cuatro serotipos. En comparacion con la **Figura 7.** en esta distribucion por localidaes no se muestran puntos en varios paises de Africa, lo que nos dice que muchos de los casos de virus del Dengue en este continente se reportan sin su localidad. Las regiones que tienen reportado varias localidades son Sur America y Asia.
+
+
+### Mapa-mundi de localidades para cada seroripo ###
+
+```{r, fig.width = 7, fig.height = 20, echo = FALSE, message=FALSE, warning=FALSE}
+
+## SS
+
+p <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SS, aes(x=lon, y=lat),color="deeppink", size=1.5, alpha=0.5)+
+  ggtitle("DENV") +
+  geom_jitter(width = 10, height = 10)
+
+
+#S1
+
+p1 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= S1, aes(x=lon, y=lat),color="green3", size=1.5, alpha=0.5)+
+  ggtitle("DENV 1") +
+  geom_jitter(width = 10, height = 10)
+
+#S2
+
+p2 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= S2, aes(x=lon, y=lat),color="turquoise3", size=1.5, alpha=0.5)+
+  ggtitle("DENV 2") +
+  geom_jitter(width = 10, height = 10)
+
+#S3
+
+p3 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= S3, aes(x=lon, y=lat),color="mediumblue", size=1.5, alpha=0.5)+
+  ggtitle("DENV 3") +
+  geom_jitter(width = 10, height = 10)
+
+#S4
+
+p4 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= S4, aes(x=lon, y=lat),color="purple", size=1.5, alpha=0.5)+
+  ggtitle("DENV 4") +
+  geom_jitter(width = 10, height = 10)
+
+multiplot(p,p1, p2, p3, p4, cols=1)
+
+```
+**Figura 11.** Localidades reportadas para cada serotipo.
 
 ### Años ###
 
@@ -528,15 +643,118 @@ count_years <- transform(count_years, Year= reorder(Year, -number_year))
 ggplot(data = count_years, aes(x = Year, y = number_year, color=Year)) +
   geom_bar(stat = "identity", fill="white")+
   labs(x= "Year", y= "Data Number")+
-  scale_color_grey(start= 0.7, end=0.1)+
+  scale_color_grey(start= 0.1, end=0.7)+
   theme_classic()+
   theme(legend.position="none")+
   coord_flip()
 
 ```
-Frecuencia de los años registrados en la base de datos, siendo el registro mas antiguo del ano 1600, y el mas reciente del ano 2016, cabe recordar que la base de datos fue descargada en el 2016 por lo cual es muy probable que los datos que se tienen de los años 2015 y 2016 no sean la misma cantidad con la que se cuente en este momento para esos años. 
+**Figura 12.** Frecuencia de los años registrados en la base de datos, siendo el registro mas antiguo del año 1600, y el mas reciente del año 2016. En la grafica se puede observar como en los años mas recientes se ha aumnetado el numero de casos de Dengue que son secuenciados y reportados, cabe recordar que la base de datos fue descargada en el 2016 por lo cual es muy probable que los datos que se tienen de los años 2015 y 2016 no representen la cantidad con la que se cuente en este momento para esos años. Tambien es importante resaltar que mas de 4.000 casos no reportan en año.
 
 .
+
+
+### Años de casos que no reportan el serotipo (DENV) ###
+
+
+
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+
+DENV <- datos[datos$Serotype=="DENV",]
+years <- unique(DENV$Year)
+
+years_denv <- data.frame()
+
+for(i in 1:length(years)){
+  years_denv[i, "Year"] <- years[i]
+  years_denv[i, "number_year"] <- length(DENV[which(DENV$Year==years[i]),10])
+  years_denv[1, "number_year"] <- length(which(is.na(DENV$Year)==T))
+}
+
+years_denv <- transform(years_denv, Year= reorder(Year, -number_year))
+
+ggplot(data = years_denv, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Number of Registers")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  theme(legend.position="none")+
+  ggtitle("Years frecuency for DENV without serotype reported")+
+  coord_flip()
+
+```
+**Figura 13.** Años de los casos no serotificados. Alrededor de la mitad de los casos sin serotipos no reportan su año. En la **Figura 8.** se muestra que estos casos no pertenecen a un solo pais, y en esta figura vemos que tampoco pertenecen a un año especifico, y que tampoco pertenecen a casos viejos o nuevos. 
+
+.
+
+
+### Años para casos con pais y con pais-localidad ###
+```{r, fig.width = 10, fig.height = 8, echo = FALSE, message=FALSE, warning=FALSE}
+
+# Años de los Casos con Localidades
+
+db_location <- datos[which(is.na(datos$Location)==F),]
+
+year <- unique(db_location$Year)
+
+years_location <- data.frame()
+
+for(i in 1:length(year)){
+  years_location[i, "Year"] <- year[i]
+  years_location[i, "number_year"] <-length(db_location[which(db_location$Year==year[i]),10])
+  years_location[8, "number_year"] <- length(which(is.na(db_location$Year)==T))
+}
+
+
+years_location <- transform(years_location, Year= reorder(Year, -number_year))
+
+ggplot(data = years_location, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Number of Registers")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  theme(legend.position="none")+
+  ggtitle("Years for cases with location reported")+
+  coord_flip()
+
+```
+**Figura 14.** Años para casos con localidad. 6084 casos que reportan localidad, de los cuales 4263 no reportan año.
+
+
+```{r, fig.width = 8, fig.height = 10, echo = FALSE, message=FALSE, warning=FALSE}
+# Años de casos con pais sin localidad
+
+db_country <- datos[which(is.na(datos$Location)==T),]
+
+year <- unique(db_country$Year)
+
+years_country <- data.frame()
+
+for(i in 1:length(year)){
+  years_country[i, "Year"] <- year[i]
+  years_country[i, "number_year"] <-length(db_country[which(db_country$Year==year[i]),10])
+  years_country[7, "number_year"] <- length(which(is.na(db_country$Year)==T))
+}
+
+
+years_country <- transform(years_country, Year= reorder(Year, -number_year))
+
+ggplot(data = years_country, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Number of Registers")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  theme(legend.position="none")+
+  ggtitle("Years for cases with Country, without location reported")+
+  coord_flip()
+
+```
+**Figura 15.** Años para casos con pais y sin localidad. 12305 casos que reportan pais pero no localidad, de los cuales 3859 no reportan año.
+
+Para las graficas **Figura 14.** y **Figura 15.** a medida que avanzan los años fue aumentando el numero de casos que se reportan con pais o con pais-localidad, Sin embargo en la **Figura 15.**, se puede ver que estan los registros mas antiguos (1600,1700,1800), es decir que, antes se registraba solo pais, mientras que en la **Figura 14.**, el año mas antiguo es del 1944, es decir, que con el tiempo sí se fue mejorando en el reporte del lugar de los casos.
+
+.
+
 
 ### Pais, localidad y año ###
 
@@ -555,6 +773,6 @@ ggplot(data = Coloye, aes(x= Data, y = Data_Number))+
 
 ```
 
-Frecuencia de los datos que contiene 1. Reportado el pais, 2. Reportado pais y localidad, 3. Reportado pais, localidad y ano, 4. Reportado pais y ano.
+**Figura 16.** Frecuencia de los datos que contiene 1. Reportado el pais, 2. Reportado pais y localidad, 3. Reportado pais, localidad y año, 4. Reportado pais y año. Solo alrededor de un cuarto (1/4) del total de casos que contiene la base de datos reportan su pais, localidad y año, sin embargo esto se debe a que en realidad lo que no se esta reportan es la localidad, ya que mas de tres cuartos (3/4) del total de datos reporta el pais y año.
 
 
