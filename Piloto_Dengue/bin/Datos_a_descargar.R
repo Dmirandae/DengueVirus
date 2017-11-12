@@ -11,7 +11,7 @@ bd_dengue <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Bas
 # Saber las posiciones de los datos con las siguentes caracteristicas:
 # (Esto con el fin de poder eliminar estos datos que no me sirven para mi trabajo y poder descargar los datos ya filtrados)
 
-# 1. Los datos que tengan NA tanto en la columna pais como en la columna ano
+# 1. Los datos que tengan NA tanto en la columna pais como en la columna ano (En las dos al mismo tiempo)
 country_year_na <- which(is.na(bd_dengue$Country) & is.na(bd_dengue$Year))
 
 # 2. Los datos que no tienen reportado el serotipo
@@ -28,6 +28,8 @@ dschimeric <- which(bd_dengue$Serotype=="Chimeric")
 
 # Concateno las posiciones de esos datos que no me sirve, que no quiero descargar
 bd_eliminar <- c(country_year_na,dsserotype,dschimeric, dsclone,dsunverified)
+
+bd_eliminar <- unique(bd_eliminar)
 
 # Eliminos esos datos que ya he identificado antes y que no quiero descargar
 datos <- bd_dengue[-bd_eliminar,]
