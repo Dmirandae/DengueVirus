@@ -751,7 +751,7 @@ ggplot(data = years_country, aes(x = Year, y = number_year, color=Year)) +
 ```
 **Figura 15.** Años para casos con pais y sin localidad. 12305 casos que reportan pais pero no localidad, de los cuales 3859 no reportan año.
 
-Para las graficas **Figura 14.** y **Figura 15.** a medida que avanzan los años fue aumentando el numero de casos que se reportan con pais o con pais-localidad, Sin embargo en la **Figura 15.**, se puede ver que estan los registros mas antiguos (1600,1700,1800), es decir que, antes se registraba solo pais, mientras que en la **Figura 14.**, el año mas antiguo es del 1944, es decir, que con el tiempo sí se fue mejorando en el reporte del lugar de los casos.
+Para las graficas **Figura 14.** y **Figura 15.** a medida que avanzan los años fue aumentando el numero de casos que se reportan con pais o con pais-localidad. En la **Figura 15.**, se puede ver que estan los registros mas antiguos (1600,1700,1800), es decir que, antes se registraba solo pais, mientras que en la **Figura 14.**, el año mas antiguo es del 1944, es decir, que con el tiempo sí se fue mejorando en el reporte del lugar de los casos.
 
 .
 
