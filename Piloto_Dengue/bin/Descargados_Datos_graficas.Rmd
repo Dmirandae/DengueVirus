@@ -1,0 +1,988 @@
+---
+title: "Datos descargados del Genoma y Gen E del virus del Dengue"
+output: html_notebook
+---
+
+Estas graficas describen los casos de Virus del Dengue registrados en la base de datos "bd_Dengue" ("https://gitlab.com/AndreaSilva/LSB/tree/master/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue") que reportan el Genoma y el Gen de la envoltura (Gen E). Estos casos cumplen con las siguientes condiciones: 
+
+* No estan designados por el GenBank como:
+     + Quimeras
+     + Clones
+     + No Verificados
+* Reportan el serotipo
+* Reportan el año de registro y/o Reportan el pais
+
+Genoma:
+
+* Longitud de la secuencia > 10100 pb. Teniendo encuenta que el genoma del virus del Degue es de alrededor de 11.000 pb
+* El GenBank especifique el inicio y final del CDS
+
+Gen E:
+
+* Longitud de la secuencias > 1300 pb < 1600 pb. Teniendo encuenta que la longitud del gen E reportada por las secuencias de referencia del GenBnak es de 1485 pb
+
+
+### Genoma y Gen E###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+library(forcats)
+library("ggplot2")
+library("RColorBrewer")
+
+Genes <- as.character(unique(datos$Gene))
+
+Genes.length <- data.frame()
+
+for(i in 1:length(Genes)){
+  Genes.length[i,"gene_name"] <- Genes[i]
+  Genes.length[i,"gene_count"] <- length(datos[which(datos$Gene==Genes[i]),6])
+  Genes.length[12,"gene_count"] <- length(which(is.na(datos$Gene)==T))
+}
+
+Genes.length <- transform(Genes.length, gene_name= reorder(gene_name, -gene_count))
+ggplot(data = Genes.length[c(1,7,9,5,11),], aes(x = gene_name, y = gene_count)) +
+  geom_bar(stat = "identity", fill="steelblue")+
+  labs(x= "Gene", y= "Data Number")+
+  theme_classic()+
+  theme(legend.position="none")
+
+
+
+```
+**Figura 1. ** Del total de casos registrados en la base de datos, alrededor de 8.000 casos reportan la secuencia del Gen E, siendo el Gen con mayor frecuencia. Los casos que reportan el Genoma Completo son el segundo con mayor frecuencias, y son alrededor de 4.000 casos.
+
+
+### Genoma Completo ###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+library(ape)
+library(seqinr)
+
+## GENOMA
+
+bd_dengue <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv", stringsAsFactors = F)
+
+seq_genoma <- read.fasta(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/Secuencias_genoma_completo.fasta")
+
+Names <- attr(seq_genoma, "name")
+
+#write.csv(Names, file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/id_descargadas.csv")
+
+id_descargadas <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/id_descargadas.csv")
+
+posicion_genome <- vector()
+
+for(i in 1:length(id_descargadas$N_Accesion)){
+  posicion_genome[i] <- which(bd_dengue$N_Accesion==id_descargadas$N_Accesion[i])
+}
+
+Genome <- bd_dengue[posicion_genome,]
+
+write.csv(Genome, file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Genome.csv")
+
+Genome
+```
+**Tabla 1.** Los datos con Genoma Completo son 3.884 casos que cumplen con las condiciones planteadas al inicio, de los cuales se tiene información sobre el Numero de Aceso, Serotipo, genotipo, asi como el pais, localidad (coordenadas) y año en que fueron reportados los casos.  
+
+
+### Gen de la Envoltura (Gen E) ###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+## GEN E
+
+seq_gene <- read.fasta(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/Gen_E.fasta")
+
+id_gene <- attr(seq_gene, "name")
+
+position_gene <- vector()
+
+for(i in 1:length(id_gene)){
+  position_gene[i] <- which(bd_dengue$N_Accesion==id_gene[i])
+}
+
+GenE <-bd_dengue[position_gene,]
+
+write.csv(GenE, file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/GenE.csv")
+
+GenE
+
+```
+**Tabla 2.** Los datos del Gen E son 5.614 casos que cumplen con las condiciones planteadas, de los cuales se tiene información sobre el Numero de Aceso, Serotipo, genotipo, asi como el pais, localidad (coordenadas) y año en que fueron reportados los casos.
+
+### Serotipos ###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+# GENOMA
+
+D1_G <- length(Genome[Genome$Serotype=="DENV_1",4])
+D2_G <- length(Genome[Genome$Serotype=="DENV_2",4])
+D3_G <- length(Genome[Genome$Serotype=="DENV_3",4])
+D4_G <- length(Genome[Genome$Serotype=="DENV_4",4])
+
+
+data <- c( D1_G, D2_G, D3_G, D4_G)
+
+Name_serotype <- sort(unique(Genome$Serotype))
+
+serotype_genome <- data.frame(data, Name_serotype)
+
+# GEN E
+
+D1_E <- length(GenE[GenE$Serotype=="DENV_1",4])
+D2_E <- length(GenE[GenE$Serotype=="DENV_2",4])
+D3_E <- length(GenE[GenE$Serotype=="DENV_3",4])
+D4_E <- length(GenE[GenE$Serotype=="DENV_4",4])
+
+
+data <- c( D1_E, D2_E, D3_E, D4_E)
+
+Name_serotype <- sort(unique(GenE$Serotype))
+
+serotype_gene <- data.frame(data, Name_serotype)
+
+type <- c("Genome", "Genome", "Genome", "Genome", "GenE", "GenE", "GenE", "GenE")
+
+serotype <- rbind(serotype_genome,serotype_gene)
+
+serotype <- cbind(serotype,type)
+
+library("ggplot2")
+
+ggplot(data = serotype, aes(x=Name_serotype , y = data, fill=type))+
+  geom_bar(stat = "identity", position=position_dodge())+
+  scale_colour_brewer()+
+  theme_minimal()
+
+```
+**Figura 2.** Frecuencias de los serotipos para Gen E y Genoma. Los serotipos de los casos con Genoma presentan el mismo patron que los serotipos de toda la base de datos, donde el serotipo 1 tiene mayor frecuencia seguido del serotipo 2, 3 y 4. Por el contrario, en los casos con Gen E el serotipo 4 tiene mayor frecuecia que el serotipo 3.
+
+
+### Paises para datos con Genoma ###
+
+```{r, fig.width = 10, fig.height = 8,echo = FALSE, message=FALSE, warning=FALSE}
+
+Country_names <- unique(Genome$Country)
+
+
+country.genome <- data.frame()
+
+for(i in 1:length(Country_names)){
+  country.genome[i,"Country_names"] <- Country_names[i]
+  country.genome[i, "number_cases"] <- length(Genome[which(Genome$Country==Country_names[i]),8])
+  country.genome[11, "number_cases"] <- length(which(is.na(Genome$Country)==T))
+}
+
+country.genome <- transform(country.genome, Country_names= reorder(Country_names, +number_cases))
+
+ggplot(data = country.genome, aes(x = Country_names, y = number_cases, color=Country_names)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Country", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+**Figura 3.** Paises reportados para casos con Genoma Completo. El pais con mayor numero de casos es VietNam (1092 casos), al igual que en la base de datos total. Luego le siguen Nicaragua, Puerto Rico y Singapur. Cabe resaltar que entre los 10 paises con mayor frecuancia se encuentran 5 paises de America Latina (Nicaragua(2), Puerto Rico(3), Venezuela(5), Brazil(6), Mexico(8)) y 5 paises de Asia (VietNam(1), Singapur(4), Cambodia(7), Tailandia(9), Indonesia(10))
+
+### Paises para datos con Gen E ###
+
+```{r, fig.width = 10, fig.height = 10,echo = FALSE, message=FALSE, warning=FALSE}
+
+Country_names <- unique(GenE$Country)
+
+
+country.gene <- data.frame()
+
+for(i in 1:length(Country_names)){
+  country.gene[i,"Country_names"] <- Country_names[i]
+  country.gene[i, "number_cases"] <- length(GenE[which(GenE$Country==Country_names[i]),8])
+  country.gene[28, "number_cases"] <- length(which(is.na(GenE$Country)==T))
+}
+
+country.gene <- transform(country.gene, Country_names= reorder(Country_names, +number_cases))
+
+ggplot(data = country.gene, aes(x = Country_names, y = number_cases, color=Country_names)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Country", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+**Figura 4.** Paises reportados para casos con Gen E. El pais con mayor numero de casos es Singapur (750 casos), seguido de Tailandia (725 casos) y China (672). Entre los 10 paises con mayor frecuancia se encuentran 2 paises de America Latina (Brazil(5), Mexico(10)), 2 islas (French Polynesia(8), Nueva Caledonia(9)) y 6 paises de Asia (Singapur(1), Tailandia(2), China (3), VietNam(4), Indonesia(6), Malasia(7)).
+
+
+### Mapa-Mundi: Numero de casos reportados por paises  ###
+
+```{r, fig.width = 10, fig.height = 12,echo = FALSE, message=FALSE, warning=FALSE}
+# Frecuencia de los paises con sus respectivas coordenadas
+# SIN DISCRIMMINAR POR SEROTIPOS
+
+library(rworldmap)
+library(ggplot2)
+
+# GENOMA
+
+Country_names <- unique(Genome$Country)
+
+freg.country <- data.frame()
+
+for(i in 1:length(Country_names)){
+  freg.data <- Genome[which(Genome$Country == Country_names[i]),]
+  freg.country[i,"Country_names"] <- Country_names[i]
+  freg.country[i,"lat"] <- freg.data$lat_country[1]
+  freg.country[i,"lon"] <- freg.data$lon_country[1]
+  freg.country[i, "number_cases"] <- length(freg.data$Country)
+}
+
+freg.country <- na.omit(freg.country)
+
+# GRAFICA MAPA-MUNDI SIN DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+p <- ggplot()+ 
+  #theme(legend.position="none")+
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= freg.country, aes(x=lon, y=lat, size=number_cases), color="coral1" , alpha=0.5)+
+  ggtitle("Genoma")+
+  scale_size(name="Number of cases")
+
+# GEN E 
+
+
+Country_names <- unique(GenE$Country)
+
+free.country <- data.frame()
+
+for(i in 1:length(Country_names)){
+  free.data <- GenE[which(GenE$Country == Country_names[i]),]
+  free.country[i,"Country_names"] <- Country_names[i]
+  free.country[i,"lat"] <- free.data$lat_country[1]
+  free.country[i,"lon"] <- free.data$lon_country[1]
+  free.country[i, "number_cases"] <- length(free.data$Country)
+}
+
+free.country <- na.omit(free.country)
+
+# GRAFICA MAPA-MUNDI SIN DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+p1 <- ggplot()+ 
+  #theme(legend.position="none")+
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= free.country, aes(x=lon, y=lat, size=number_cases), color="coral1" , alpha=0.5)+
+  ggtitle("Gen E")+
+  scale_size(name="Number of cases")
+
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+multiplot(p,p1)
+
+```
+**Figura 5.**  Mapa-mundi del numero de casos reportados en cada paises. En esta grafica se puede apreciar que la frecuencia de los casos que reportan el Genoma es homogenea entre los paises de America Latina y Asia (> 250 < 500). Sin embargo es muy notorio que VietNam tiene alta frecuencia ( alrededor de 1000 casos). Los casos que reportan el Gen E tiene frecuencias mas heterogeneas porque 4 paises de Asia reportan las frecuencias mas altas (> 600), mientras que en America Latina el pais con mayor numero de casos es Brasil (> 400 < 600), los demas reportan no mas de 200 casos. Tanto los casos que reportan Genoma como Gen E tiene baja frecuencias en los paises africanos (< 200), esto tambien se observa en la base de datos completa.
+
+### Distribucion de los serotipos por paises: Casos que reportan Genoma ###
+```{r, echo = FALSE, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
+
+Country_names <- na.omit(unique(Genome$Country))
+
+# Frecuencia de los serotipos en los paises registrados: 
+
+# SEROTIPO 1
+
+mundig_1 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Genome[which(Genome$Serotype == "DENV_1" & Genome$Country == Country_names[i]),]
+  mundig_1[i, "Serotype"] <- mini.data$Serotype[1]
+  mundig_1[i,"Country_names"] <- Country_names[i]
+  mundig_1[i,"lat"] <- mini.data$lat_country[1]
+  mundig_1[i,"lon"] <- mini.data$lon_country[1]
+  mundig_1[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 2
+
+mundig_2 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Genome[which(Genome$Serotype == "DENV_2" & Genome$Country == Country_names[i]),]
+  mundig_2[i, "Serotype"] <- mini.data$Serotype[1]
+  mundig_2[i,"Country_names"] <- Country_names[i]
+  mundig_2[i,"lat"] <- mini.data$lat_country[1]
+  mundig_2[i,"lon"] <- mini.data$lon_country[1]
+  mundig_2[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 3
+
+mundig_3 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Genome[which(Genome$Serotype == "DENV_3" & Genome$Country == Country_names[i]),]
+  mundig_3[i, "Serotype"] <- mini.data$Serotype[1]
+  mundig_3[i,"Country_names"] <- Country_names[i]
+  mundig_3[i,"lat"] <- mini.data$lat_country[1]
+  mundig_3[i,"lon"] <- mini.data$lon_country[1]
+  mundig_3[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 4
+
+mundig_4 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Genome[which(Genome$Serotype == "DENV_4" & Genome$Country == Country_names[i]),]
+  mundig_4[i, "Serotype"] <- mini.data$Serotype[1]
+  mundig_4[i,"Country_names"] <- Country_names[i]
+  mundig_4[i,"lat"] <- mini.data$lat_country[1]
+  mundig_4[i,"lon"] <- mini.data$lon_country[1]
+  mundig_4[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+data.mundi <- rbind(mundig_1,mundig_2,mundig_3,mundig_4)
+data.mundi <- na.omit(data.mundi)
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  ggtitle("Paises reportadas para Genoma")+
+  geom_point(data= data.mundi, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+```
+**Figura 6.** Los serotipos de los casos que reportan el Genoma se distribuyen por toda la region tropical y subtropical.
+
+
+### Paises reportados en casos con Gen E ###
+```{r, echo = FALSE, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
+
+Country_names <- na.omit(unique(GenE$Country))
+
+# Frecuencia de los serotipos en los paises registrados: 
+
+# SEROTIPO 1
+
+mundie_1 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- GenE[which(GenE$Serotype == "DENV_1" & GenE$Country == Country_names[i]),]
+  mundie_1[i, "Serotype"] <- mini.data$Serotype[1]
+  mundie_1[i,"Country_names"] <- Country_names[i]
+  mundie_1[i,"lat"] <- mini.data$lat_country[1]
+  mundie_1[i,"lon"] <- mini.data$lon_country[1]
+  mundie_1[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 2
+
+mundie_2 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- GenE[which(GenE$Serotype == "DENV_2" & GenE$Country == Country_names[i]),]
+  mundie_2[i, "Serotype"] <- mini.data$Serotype[1]
+  mundie_2[i,"Country_names"] <- Country_names[i]
+  mundie_2[i,"lat"] <- mini.data$lat_country[1]
+  mundie_2[i,"lon"] <- mini.data$lon_country[1]
+  mundie_2[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+
+#SEROTIPO 3
+
+mundie_3 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- GenE[which(GenE$Serotype == "DENV_3" & GenE$Country == Country_names[i]),]
+  mundie_3[i, "Serotype"] <- mini.data$Serotype[1]
+  mundie_3[i,"Country_names"] <- Country_names[i]
+  mundie_3[i,"lat"] <- mini.data$lat_country[1]
+  mundie_3[i,"lon"] <- mini.data$lon_country[1]
+  mundie_3[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+#SEROTIPO 4
+
+mundie_4 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- GenE[which(GenE$Serotype == "DENV_4" & GenE$Country == Country_names[i]),]
+  mundie_4[i, "Serotype"] <- mini.data$Serotype[1]
+  mundie_4[i,"Country_names"] <- Country_names[i]
+  mundie_4[i,"lat"] <- mini.data$lat_country[1]
+  mundie_4[i,"lon"] <- mini.data$lon_country[1]
+  mundie_4[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+
+
+data.mundi <- rbind(mundie_1,mundie_2,mundie_3,mundie_4)
+data.mundi <- na.omit(data.mundi)
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  ggtitle("Paises reportadas para Gen E")+
+  geom_point(data= data.mundi, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+```
+**Figura 7.** Los serotipos de los casos que reportan el Gen E se distribuyen por toda la region tropical y subtropical.
+
+
+
+### Localidades: Genoma ###
+
+```{r, echo = FALSE, fig.width=9, fig.height=5, message=FALSE, warning=FALSE}
+
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library("RColorBrewer")
+
+location <- Genome[which(is.na(Genome$Location)==F),9]
+
+location <- gsub(" ", "", location)
+
+locorpus <- Corpus(VectorSource(location))
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+locorpus <- tm_map(locorpus, toSpace, "/")
+locorpus <- tm_map(locorpus, toSpace, "-")
+locorpus <- tm_map(locorpus, toSpace, "--")
+
+locorpus <- tm_map(locorpus, content_transformer(tolower))
+
+locorpus <- tm_map(locorpus, removeNumbers)
+
+locorpus <- tm_map(locorpus, removeWords, stopwords('english'))
+
+locorpus <- tm_map(locorpus, removeWords, c("blabla1", "blabla2")) 
+
+locorpus <- tm_map(locorpus, removePunctuation)
+
+locorpus <- tm_map(locorpus, stripWhitespace)
+
+dtm <- TermDocumentMatrix(locorpus)
+lomax <- as.matrix(dtm)
+vcation <- sort(rowSums(lomax),decreasing=TRUE)
+loframe <- data.frame(word = names(vcation),freq=vcation)
+
+
+#set.seed(1234)
+#wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,.5), min.freq = 2,
+#          max.words=2000, random.order=FALSE, rot.per=0.35,
+#          colors=brewer.pal(11, "RdYlGn"))
+
+
+wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,1), min.freq = 2,
+          max.words=2000, random.order=FALSE, rot.per=0.45,
+          colors=brewer.pal(12, "Paired"))
+
+
+```
+**Figura 8.** Nube de localidades para casos que reportan el Genoma. Las localidades que mas estan reportadas pertenecen a VietNam (Sur de Vietnam con 1092 casos representando casi la totalidad de casos que reporta este país), Cambidia (KCH con 115), Nicaragua (Managua con 323 casos), y  Venezuela (Aragua con 192 casos). 
+
+
+### Localidades: Gen E###
+```{r, echo = FALSE, fig.width=9, fig.height=5}
+
+location <- GenE[which(is.na(GenE$Location)==F),9]
+
+location <- gsub(" ", "", location)
+
+locorpus <- Corpus(VectorSource(location))
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+locorpus <- tm_map(locorpus, toSpace, "/")
+locorpus <- tm_map(locorpus, toSpace, "-")
+locorpus <- tm_map(locorpus, toSpace, "--")
+
+locorpus <- tm_map(locorpus, content_transformer(tolower))
+
+locorpus <- tm_map(locorpus, removeNumbers)
+
+locorpus <- tm_map(locorpus, removeWords, stopwords('english'))
+
+locorpus <- tm_map(locorpus, removeWords, c("blabla1", "blabla2")) 
+
+locorpus <- tm_map(locorpus, removePunctuation)
+
+locorpus <- tm_map(locorpus, stripWhitespace)
+
+dtm <- TermDocumentMatrix(locorpus)
+lomax <- as.matrix(dtm)
+vcation <- sort(rowSums(lomax),decreasing=TRUE)
+loframe <- data.frame(word = names(vcation),freq=vcation)
+
+
+#set.seed(1234)
+#wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,.5), min.freq = 2,
+#          max.words=2000, random.order=FALSE, rot.per=0.35,
+#          colors=brewer.pal(11, "RdYlGn"))
+
+
+wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,1), min.freq = 2,
+          max.words=2000, random.order=FALSE, rot.per=0.45,
+          colors=brewer.pal(8, "Paired"))
+
+
+```
+**Figura 9.** Nube de localidades para casos que reportan el Gen E. Las localidades que mas estan reportadas pertenecen a Tailandia (Bangkok con 265 casos, kamphaengphet con 121 casos), China (Guangzhou con 86 casos), French Polynesia (Tahiti con 79 casos), VietNam (Mekong Delta con 56 casos), e Indonesia (Bali con 59 casos, Surabaya con 57 casos). Todos paises asiaticos.
+
+### Mapa-Mundi localidades###
+```{r, echo = FALSE, fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+
+location <- which(is.na(Genome$Location)==F)
+
+names_location <- unique(Genome[which(is.na(Genome$Location)==F),9])
+
+location_country_all <- vector()
+
+for(i in 1:length(location)){
+  location_country_all[i] <-  paste(Genome$Location[location[i]],",",Genome$Country[location[i]], sep = "")
+}
+
+
+location_country <- unique(location_country_all)
+
+# SEROTIPO 1
+
+SG1 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Genome[which(Genome$Serotype=="DENV_1" & Genome$Location==names_location[i]),]
+  SG1[i, "Serotype"] <- mini.data$Serotype[1]
+  SG1[i,"location_names"] <- location_country[i]
+  SG1[i, "lat"] <- mini.data$lat_location[1]
+  SG1[i, "lon"] <- mini.data$lon_location[1]
+  SG1[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SG1 <- na.omit(SG1)
+
+# SEROTIPO 2
+
+SG2 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Genome[which(Genome$Serotype=="DENV_2" & Genome$Location==names_location[i]),]
+  SG2[i, "Serotype"] <- mini.data$Serotype[1]
+  SG2[i,"location_names"] <- location_country[i]
+  SG2[i, "lat"] <- mini.data$lat_location[1]
+  SG2[i, "lon"] <- mini.data$lon_location[1]
+  SG2[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SG2 <- na.omit(SG2)
+
+# SEROTIPE 3
+
+SG3 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Genome[which(Genome$Serotype=="DENV_3" & Genome$Location==names_location[i]),]
+  SG3[i, "Serotype"] <- mini.data$Serotype[1]
+  SG3[i,"location_names"] <- location_country[i]
+  SG3[i, "lat"] <- mini.data$lat_location[1]
+  SG3[i, "lon"] <- mini.data$lon_location[1]
+  SG3[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SG3 <- na.omit(SG3)
+
+# SEROTIPE 4
+
+SG4 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Genome[which(Genome$Serotype=="DENV_4" & Genome$Location==names_location[i]),]
+  SG4[i, "Serotype"] <- mini.data$Serotype[1]
+  SG4[i,"location_names"] <- location_country[i]
+  SG4[i, "lat"] <- mini.data$lat_location[1]
+  SG4[i, "lon"] <- mini.data$lon_location[1]
+  SG4[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SG4 <- na.omit(SG4)
+
+mundi.location <- rbind(SG1,SG2,SG3,SG4)
+
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= mundi.location, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  ggtitle("Localidaes reportadas para Genoma")+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+```
+**Figura 10.** Distribución de los serotipos por localidades para casos con Genoma Completo. En cada pais donde se reportaron los casos hay presencia de los 4 serotipos, excepto en Peru, donde solo presenta serotipo 2, en Paraguay solo presenta serotipo 3 y Japon solo presenta serotipo 1.  
+
+
+### Mapa-mundi localidades Gen E###
+```{r, echo = FALSE, fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+
+location <- which(is.na(GenE$Location)==F)
+
+names_location <- unique(GenE[which(is.na(GenE$Location)==F),9])
+
+location_country_all <- vector()
+
+for(i in 1:length(location)){
+  location_country_all[i] <-  paste(GenE$Location[location[i]],",",GenE$Country[location[i]], sep = "")
+}
+
+
+location_country <- unique(location_country_all)
+
+# SEROTIPO 1
+
+SE1 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- GenE[which(GenE$Serotype=="DENV_1" & GenE$Location==names_location[i]),]
+  SE1[i, "Serotype"] <- mini.data$Serotype[1]
+  SE1[i,"location_names"] <- location_country[i]
+  SE1[i, "lat"] <- mini.data$lat_location[1]
+  SE1[i, "lon"] <- mini.data$lon_location[1]
+  SE1[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SE1 <- na.omit(SE1)
+
+# SEROTIPO 2
+
+SE2 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- GenE[which(GenE$Serotype=="DENV_2" & GenE$Location==names_location[i]),]
+  SE2[i, "Serotype"] <- mini.data$Serotype[1]
+  SE2[i,"location_names"] <- location_country[i]
+  SE2[i, "lat"] <- mini.data$lat_location[1]
+  SE2[i, "lon"] <- mini.data$lon_location[1]
+  SE2[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SE2 <- na.omit(SE2)
+
+# SEROTIPE 3
+
+SE3 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- GenE[which(GenE$Serotype=="DENV_3" & GenE$Location==names_location[i]),]
+  SE3[i, "Serotype"] <- mini.data$Serotype[1]
+  SE3[i,"location_names"] <- location_country[i]
+  SE3[i, "lat"] <- mini.data$lat_location[1]
+  SE3[i, "lon"] <- mini.data$lon_location[1]
+  SE3[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SE3 <- na.omit(SE3)
+
+# SEROTIPE 4
+
+SE4 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- GenE[which(GenE$Serotype=="DENV_4" & GenE$Location==names_location[i]),]
+  SE4[i, "Serotype"] <- mini.data$Serotype[1]
+  SE4[i,"location_names"] <- location_country[i]
+  SE4[i, "lat"] <- mini.data$lat_location[1]
+  SE4[i, "lon"] <- mini.data$lon_location[1]
+  SE4[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SE4 <- na.omit(SE4)
+
+mundi.location <- rbind(SE1,SE2,SE3,SE4)
+
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= mundi.location, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  ggtitle("Localidades reportadas para Gen E")+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+```
+**Figura 11.** Distribución de los serotipos por localidades para casos con Gen E. En brazil los casos reportados son solo del serotipo 1, en colombia son solo del serotipo 4, y en ecuador, peru, bolivia, y paraguay son del serotipo 2 los casos que se reporta su localidad.
+
+
+
+### Mapa-mundi de localidades para cada seroripo ###
+### Genoma ###
+```{r, fig.width = 7, fig.height = 20, echo = FALSE, message=FALSE, warning=FALSE}
+
+
+#SG1
+
+p1 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SG1, aes(x=lon, y=lat),color="turquoise3", size=1.5, alpha=0.5)+
+  ggtitle("DENV 1") +
+  geom_jitter(width = 10, height = 10)
+
+#SG2
+
+p2 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SG2, aes(x=lon, y=lat),color="deeppink", size=1.5, alpha=0.5)+
+  ggtitle("DENV 2") +
+  geom_jitter(width = 10, height = 10)
+
+#SG3
+
+p3 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SG3, aes(x=lon, y=lat),color="mediumblue", size=1.5, alpha=0.5)+
+  ggtitle("DENV 3") +
+  geom_jitter(width = 10, height = 10)
+
+#SG4
+
+p4 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SG4, aes(x=lon, y=lat),color="green3", size=1.5, alpha=0.5)+
+  ggtitle("DENV 4") +
+  geom_jitter(width = 10, height = 10)
+
+multiplot(p1, p2, p3, p4, cols=1)
+
+```
+**Figura 12.** Distribución de cada serotipo en las localidades reportadas para casos que reportan el Genoma.
+
+
+### Gen E ###
+
+```{r, fig.width = 7, fig.height = 20, echo = FALSE, message=FALSE, warning=FALSE}
+
+
+#SE1
+
+p1 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SE1, aes(x=lon, y=lat),color="turquoise3", size=1.5, alpha=0.5)+
+  ggtitle("DENV 1") +
+  geom_jitter(width = 10, height = 10)
+
+#SE2
+
+p2 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SE2, aes(x=lon, y=lat),color="deeppink", size=1.5, alpha=0.5)+
+  ggtitle("DENV 2") +
+  geom_jitter(width = 10, height = 10)
+
+#SE3
+
+p3 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SE3, aes(x=lon, y=lat),color="mediumblue", size=1.5, alpha=0.5)+
+  ggtitle("DENV 3") +
+  geom_jitter(width = 10, height = 10)
+
+#SE4
+
+p4 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(x=long, y=lat,map_id=region), fill="white", colour="black", size=0.5)+
+  geom_point(data= SE4, aes(x=lon, y=lat),color="green3", size=1.5, alpha=0.5)+
+  ggtitle("DENV 4") +
+  geom_jitter(width = 10, height = 10)
+
+multiplot(p1, p2, p3, p4, cols=1)
+
+```
+**Fifura 13.** Distribución de cada serotipo en las localidades reportadas para casos que reportan el Gen E.
+
+
+### Años para datos que reportan Genoma ###
+
+```{r, fig.width = 12, fig.height = 10, echo = FALSE}
+yearsG <- unique(Genome$Year)
+
+count_yearsG <- data.frame()
+
+for(i in 1:length(yearsG)){
+  count_yearsG[i, "Year"] <- yearsG[i]
+  count_yearsG[i, "number_year"] <- length(Genome[which(Genome$Year==yearsG[i]),10])
+  count_yearsG[6, "number_year"] <- length(which(is.na(Genome$Year)==T))
+}
+
+count_yearsG <- transform(count_yearsG, Year= reorder(Year, -number_year))
+ggplot(data = count_yearsG, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Data Number")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+**Figura 14.** Años registrados para casos con Genoma. El año mas antiguo que se reporta es el año 1600 y el mas reciente es 2016. El año 2007 es el que se ha reportado mas con 805 casos. En general, a medida que avanza los años se aumenta el numero de casos reportados para cada año.
+
+
+### Frecuencia de los años reportados poa cada pais: Genoma ###
+```{r, fig.width = 18, fig.height = 11, echo = FALSE}
+yearsG <- na.omit(unique(Genome$Year))
+
+Country_namesG <- na.omit(unique(Genome$Country))
+
+#data07 <- Genome[which(Genome$Year==2007),]
+
+Country_year <- data.frame()
+Country_year_mas <- data.frame()
+for(i in 1:length(Country_namesG)){
+  for(j in 1:length(yearsG)){
+    co.data <- Genome[which(Genome$Country==Country_namesG[i] & Genome$Year==yearsG[j]),c(8,10)]
+    Country <- co.data$Country[1]
+    Yerano <- co.data$Year[1]
+    Number_cases <- length(co.data$Year)
+    subdata <- cbind(Country, Yerano, Number_cases)
+    Country_year <- rbind(Country_year,subdata)
+  }
+  Country_year_mas <- rbind(Country_year)
+}
+
+Country_year_mas <- na.omit(Country_year_mas)
+
+Country_year_mas$Number_cases <- as.character(Country_year_mas$Number_cases)
+Country_year_mas$Number_cases <- as.numeric(Country_year_mas$Number_cases)
+
+Country_year_mas$Yerano <- as.character(Country_year_mas$Yerano)
+Country_year_mas$Yerano <- as.numeric(Country_year_mas$Yerano)
+
+Country_year_mas <- transform(Country_year_mas, Yerano= reorder(Yerano, +Yerano))
+
+ggplot(Country_year_mas, aes(x=Yerano, y=Country)) + 
+  geom_point(aes(size=Number_cases))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+**Figura 15.** Frecuencia de los años reportados para cada pais en casos con Genoma. Algunos paises solo reportan un caso en un solo año, como es el caso del salvador, laos, e islas como Guam, Grenada e islas Cook. Sin embargo la mayoria de los paises han reportado mas de un caso en mas de un año. Cabe resaltar que de los alrededor de 800 casos que son reportados para el año 2007 (**Figura 14.**), alrededor de la mitad (411) pertencen a casos de VietNam. Tambien se puede observar que en general de los 1092 casos que reportan a VietNam (**Figura 3**) la mayoria pertenecen a los años 2006, 2007, 2008.
+
+
+### Años para datos que reportan Gen E###
+
+```{r, fig.width = 12, fig.height = 10, echo = FALSE}
+yearsE <- unique(GenE$Year)
+
+count_yearsE <- data.frame()
+
+for(i in 1:length(yearsE)){
+  count_yearsE[i, "Year"] <- yearsE[i]
+  count_yearsE[i, "number_year"] <- length(GenE[which(GenE$Year==yearsE[i]),10])
+  count_yearsE[6, "number_year"] <- length(which(is.na(GenE$Year)==T))
+}
+
+count_yearsE <- transform(count_yearsE, Year= reorder(Year, -number_year))
+ggplot(data = count_yearsE, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Data Number")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+**Figura 16.** Años registrados para casos con Gen E. El año mas antiguo que se reporta es el año 1860 y el mas reciente es 2015. El año 2013 es el que se ha reportado mas con 937 casos. Igual que la **Figura 14** a medida que avanza los años se aumenta el numero de casos reportados.
+
+
+
+### Frecuencia de los años reportados poa cada pais: Gen E ###
+
+```{r, fig.width = 18, fig.height = 11, echo = FALSE}
+yearsE <- na.omit(unique(GenE$Year))
+
+Country_namesE <- na.omit(unique(GenE$Country))
+
+Country_year <- data.frame()
+Country_year_mas <- data.frame()
+for(i in 1:length(Country_namesE)){
+  for(j in 1:length(yearsE)){
+    co.data <- GenE[which(GenE$Country==Country_namesE[i] & GenE$Year==yearsE[j]),c(8,10)]
+    Country <- co.data$Country[1]
+    Yerano <- co.data$Year[1]
+    Number_cases <- length(co.data$Year)
+    subdata <- cbind(Country, Yerano, Number_cases)
+    Country_year <- rbind(Country_year,subdata)
+  }
+  Country_year_mas <- rbind(Country_year)
+}
+
+Country_year_mas <- na.omit(Country_year_mas)
+
+Country_year_mas$Number_cases <- as.character(Country_year_mas$Number_cases)
+Country_year_mas$Number_cases <- as.numeric(Country_year_mas$Number_cases)
+
+Country_year_mas$Yerano <- as.character(Country_year_mas$Yerano)
+Country_year_mas$Yerano <- as.numeric(Country_year_mas$Yerano)
+
+Country_year_mas <- transform(Country_year_mas, Yerano= reorder(Yerano, +Yerano))
+
+ggplot(Country_year_mas, aes(x=Yerano, y=Country)) + 
+  geom_point(aes(size=Number_cases))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+**Figura 17.** Frecuencia de los años reportados para cada pais en casos con Gen E. Los años con mayor numero de casos pertenecen a años recientes (1995-2014). El año 2014 reporta  400 casos (**Figura 16.**), de los cuales 259 casos son de China de 674 casos que este pais reporta. En brazil el 84% (370 casos) de los casos son reportados en el año 2013, que representa la mitad de casos reportados para ese año. Por el contrario para Singapur que es el pais con mas reportes (**Figura .**), los casos no pertenecen a un año es especial si no que se distribuyen mayoritariamente en los años 2007, 2008, 2009, 2010, 2011.
