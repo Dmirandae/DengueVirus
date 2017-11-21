@@ -3,7 +3,7 @@ title: "Datos descargados del Genoma y Gen E del virus del Dengue"
 output: html_notebook
 ---
 
-Estas graficas describen los casos de Virus del Dengue registrados en la base de datos "bd_Dengue" ("https://gitlab.com/AndreaSilva/LSB/tree/master/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue") que reportan el Genoma y el Gen de la envoltura (Gen E). Estos casos cumplen con las siguientes condiciones: 
+Estas graficas describen los casos de Virus del Dengue registrados en la base de datos [bd_Dengue] (https://gitlab.com/AndreaSilva/LSB/tree/master/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue) que reportan el Genoma y el Gen de la envoltura (Gen E). Estos casos cumplen con las siguientes condiciones: 
 
 * No estan designados por el GenBank como:
      + Quimeras
