@@ -3,12 +3,12 @@ title: "Base de datos del virus del Dengue"
 output: html_notebook
 ---
 
-Estas graficas describen la base de datos del virus del Dengue "bd_Dengue", que cuenta con la informacion recopilada del GenBank para todos los casos de Dengue registrados en esta plataforma hasta septiembre del 2016. Para mas informacion sobre que herramientas se usaron para crear la base de datos y sobre el contenido de sus variables leer en  "https://gitlab.com/AndreaSilva/LSB/tree/master/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue" el archivo README.md
+Estas graficas describen la base de datos del virus del Dengue "bd_Dengue", que cuenta con la informacion recopilada del GenBank para todos los casos de Dengue registrados en esta plataforma hasta septiembre del 2016. Para mas informacion sobre que herramientas se usaron para crear la base de datos y sobre el contenido de sus variables puden leer el archivo [README] (https://gitlab.com/AndreaSilva/LSB/tree/master/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue)  
 
 ### Estructura de la base de datos ###
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 # Leer el archivo con la base de datos 
 datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv", stringsAsFactors = F)
