@@ -31,8 +31,26 @@ downloadCDSgb<-function(No.Accesion= NULL,save.fasta=NULL ){
   require('ape')
   out<-file(save.fasta,open = 'w')
   for (i in 1:length(No.Accesion)){
-    choosebank("genbank")
-    gb <- query("gb", paste('N=',No.Accesion[i],sep=''))
+    choosebank("genbank", timeout = 30)
+    try(gb <- query("gb", paste('N=',No.Accesion[i],sep='')))
+    if(exists("gb")==F){
+      print("connection closed trying in 10 seconds")
+      Sys.sleep(10)
+      try(gb <- query("gb", paste('N=',No.Accesion[i],sep='')))
+      if(exists("gb")==F){
+        print("connection closed trying in 30 seconds")
+        Sys.sleep(30)
+        try(gb <- query("gb", paste('N=',No.Accesion[i],sep='')))
+        if(exists("gb")==F){
+          print("connection closed trying in 1 minute")
+          Sys.sleep(60)
+          try(gb <- query("gb", paste('N=',No.Accesion[i],sep='')))
+          if(exists("gb")==F){
+            warning("connection closed, check your internet connection")
+          }
+        }
+      }
+    }
     annotations <- getAnnot(gb$req[[1]])
       cds<-grep(pattern ='CDS',annotations )
       cds<-sub(pattern ='*CDS. *',replacement = '',annotations[cds])
