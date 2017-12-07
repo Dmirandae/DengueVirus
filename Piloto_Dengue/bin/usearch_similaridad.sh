@@ -24,6 +24,8 @@ cd LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo
 
 ./usearch --cluster Secuencias_sort.fasta --maxlen 12000 --id 0.97 --iddef 0 --band 1 --seedsout Secuencias_97_Disimilaridad.fasta --uc result.uc --log log_97.log
 
+./usearch --cluster Secuencias_sort.fasta --maxlen 12000 --id 0.98 --iddef 0 --band 1 --seedsout Secuencias_98_Disimilaridad.fasta --uc result.uc --log log_98.log
+
 ./usearch --cluster Secuencias_sort.fasta --maxlen 12000 --id 0.99 --iddef 0 --band 1 --seedsout Secuencias_99_Disimilaridad.fasta --uc result.uc --log log_99.log 
 
 ./usearch --cluster Secuencias_sort.fasta --maxlen 12000 --id 0.995 --iddef 0 --band 1 --seedsout Secuencias_995_Disimilaridad.fasta --uc result.uc --log log_995.log
@@ -44,6 +46,8 @@ grep ">" Secuencias_95_Disimilaridad.fasta > Secuencias_95_Disimilaridad_id.csv
 
 grep ">" Secuencias_97_Disimilaridad.fasta > Secuencias_97_Disimilaridad_id.csv
 
+grep ">" Secuencias_98_Disimilaridad.fasta > Secuencias_98_Disimilaridad_id.csv
+
 grep ">" Secuencias_99_Disimilaridad.fasta > Secuencias_99_Disimilaridad_id.csv
 
 grep ">" Secuencias_995_Disimilaridad.fasta > Secuencias_995_Disimilaridad_id.csv
@@ -57,18 +61,21 @@ diff Secuencias_sort_id.csv Secuencias_95_Disimilaridad_id.csv > diff_ideff0_95.
 
 diff Secuencias_sort_id.csv Secuencias_97_Disimilaridad_id.csv > diff_ideff0_97.csv
 
+diff Secuencias_sort_id.csv Secuencias_98_Disimilaridad_id.csv > diff_ideff0_98.csv
+
 diff Secuencias_sort_id.csv Secuencias_99_Disimilaridad_id.csv > diff_ideff0_99.csv
 
 diff Secuencias_sort_id.csv Secuencias_995_Disimilaridad_id.csv > diff_ideff0_995.csv
 
 diff Secuencias_sort_id.csv Secuencias_999_Disimilaridad_id.csv > diff_ideff0_999.csv
 
-# Estraer solo los id de las diferencias entre: 
-# Secuencias originales Vs secuencias con 97% de Disimilaridad
+# Estraer solo los id de las diferencias de las secuencias con % de Similaridad
 
 grep ">" diff_ideff0_95.csv > diff_ideff_0_95.csv 
 
 grep ">" diff_ideff0_97.csv > diff_ideff_0_97.csv
+
+grep ">" diff_ideff0_98.csv > diff_ideff_0_98.csv
 
 grep ">" diff_ideff0_99.csv > diff_ideff_0_99.csv  
 
@@ -78,6 +85,7 @@ grep ">" diff_ideff0_999.csv > diff_ideff_0_999.csv
 
 rm diff_ideff0_95.csv
 rm diff_ideff0_97.csv
+rm diff_ideff0_98.csv
 rm diff_ideff0_99.csv
 rm diff_ideff0_995.csv
 rm diff_ideff0_999.csv
@@ -89,6 +97,7 @@ rm diff_ideff0_999.csv
 
 nano Secuencias_95_Disimilaridad_id.csv
 nano Secuencias_97_Disimilaridad_id.csv
+nano Secuencias_98_Disimilaridad_id.csv
 nano Secuencias_99_Disimilaridad_id.csv
 nano Secuencias_995_Disimilaridad_id.csv
 nano Secuencias_999_Disimilaridad_id.csv
@@ -97,6 +106,7 @@ nano Secuencias_999_Disimilaridad_id.csv
 
 nano diff_ideff_0_95.csv
 nano diff_ideff_0_97.csv
+nano diff_ideff_0_98.csv
 nano diff_ideff_0_99.csv
 nano diff_ideff_0_995.csv
 nano diff_ideff_0_999.csv
