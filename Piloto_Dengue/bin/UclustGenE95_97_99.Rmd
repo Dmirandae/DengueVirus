@@ -1,0 +1,1338 @@
+---
+title: "Resultados UCLUST para secuencias del Gen E con id= 97, 98 y 99%"
+output: html_notebook
+---
+### UCLUST con id = 97, 98 y 99% ###
+
+Estas graficas representan las secuencias del Gen E del virus del Dengue analizadas con UCLUST con id= 97, 98 y 99%.
+
+De un total de 5591 datos con genoma completo:
+
+* id 97% : 142 Secuencias disimilares
+* id 98% : 305 Secuencias disimilares
+* id 99% : 1310 Secuencias disilares
+
+
+### Secuencias similares al 97% ###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+ids_98 <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/GenE_98_Disimilaridad_id.csv", header = F)
+
+ids_97 <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/GenE_97_Disimilaridad_id.csv", header = F)
+
+ids_99 <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/GenE_99_Disimilaridad_id.csv", header = F)
+
+GenE <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/GenE.csv", header = T)
+
+GenE$N_Accesion <- as.character(GenE$N_Accesion)
+
+ids_98$V1 <- as.character(ids_98$V1)
+
+ids_97$V1 <- as.character(ids_97$V1)
+
+ids_99$V1 <- as.character(ids_99$V1)
+
+## 97%
+
+posicion_97 <- vector()
+
+for(i in 1:length(ids_97$V1)){
+  posicion_97[i] <- which(GenE$N_Accesion==ids_97$V1[i])
+}
+
+Dis_97 <- GenE[posicion_97,]
+
+write.csv(Dis_97, file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE//Disimilares97.csv")    
+
+Dis_97[,2:21]
+
+```
+**Tabla 1.** Datos de secuencias del Gen E 97% disimilares.
+
+
+### Secuencias disimilares al 98% ###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+## 98%
+
+posicion_98 <- vector()
+
+for(i in 1:length(ids_98$V1)){
+  posicion_98[i] <- which(GenE$N_Accesion==ids_98$V1[i])
+}
+
+Dis_98 <- GenE[posicion_98,]
+
+write.csv(Dis_98, file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE//Disimilares98.csv")    
+
+Dis_98[,2:21]
+
+```
+**Tabla 2.** Datos de secuencias del Gen E 98% disimilares.
+
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+
+## 99%
+
+posicion_99 <- vector()
+
+for(i in 1:length(ids_99$V1)){
+  posicion_99[i] <- which(GenE$N_Accesion==ids_99$V1[i])
+}
+
+Dis_99 <- GenE[posicion_99,]
+
+write.csv(Dis_99, file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE//Disimilares99.csv")    
+
+Dis_99[,2:21]
+
+
+```
+**Tabla 3.** Datos de secuencias del GEn E 99% disimilares.
+
+
+### Serotipos ###
+
+
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+# 98
+
+D1_98 <- length(Dis_98[Dis_98$Serotype=="DENV_1",5])
+D2_98 <- length(Dis_98[Dis_98$Serotype=="DENV_2",5])
+D3_98 <- length(Dis_98[Dis_98$Serotype=="DENV_3",5])
+D4_98 <- length(Dis_98[Dis_98$Serotype=="DENV_4",5])
+
+
+data <- c( D1_98, D2_98, D3_98, D4_98)
+
+Name_serotype <- sort(unique(Dis_98$Serotype))
+
+serotype_98 <- data.frame(data, Name_serotype)
+
+# 97
+
+D1_D <- length(Dis_97[Dis_97$Serotype=="DENV_1",5])
+D2_D <- length(Dis_97[Dis_97$Serotype=="DENV_2",5])
+D3_D <- length(Dis_97[Dis_97$Serotype=="DENV_3",5])
+D4_D <- length(Dis_97[Dis_97$Serotype=="DENV_4",5])
+
+
+data <- c( D1_D, D2_D, D3_D, D4_D)
+
+Name_serotype <- sort(unique(Dis_97$Serotype))
+
+serotype_97 <- data.frame(data, Name_serotype)
+
+# 99
+
+D1_D <- length(Dis_99[Dis_99$Serotype=="DENV_1",5])
+D2_D <- length(Dis_99[Dis_99$Serotype=="DENV_2",5])
+D3_D <- length(Dis_99[Dis_99$Serotype=="DENV_3",5])
+D4_D <- length(Dis_99[Dis_99$Serotype=="DENV_4",5])
+
+
+data <- c( D1_D, D2_D, D3_D, D4_D)
+
+Name_serotype <- sort(unique(Dis_99$Serotype))
+
+serotype_99 <- data.frame(data, Name_serotype)
+
+type <- c("97 % Disimilaridad", "97 % Disimilaridad", "97 % Disimilaridad", "97 % Disimilaridad", "98 % Disimilaridad", "98 % Disimilaridad", "98 % Disimilaridad", "98 % Disimilaridad", "99 % Disimilaridad", "99 % Disimilaridad", "99 % Disimilaridad", "99 % Disimilaridad")
+
+serotype <- rbind(serotype_97,serotype_98,serotype_99)
+
+serotype <- cbind(serotype,type)
+
+library("ggplot2")
+
+ggplot(data = serotype, aes(x=Name_serotype , y = data, fill=type))+
+  geom_bar(stat = "identity", position=position_dodge())+
+  scale_colour_brewer()+
+  theme_minimal()
+
+```
+**Figura 1.** Numero de datos por serotipos para las secuencias Disimilares al 97, 98 y 99%
+
+
+### Paises ###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+Country_names <- unique(Dis_97$Country)
+
+
+country.97<- data.frame()
+
+for(i in 1:length(Country_names)){
+  country.97[i,"Country_names"] <- Country_names[i]
+  country.97[i, "number_cases"] <- length(Dis_97[which(Dis_97$Country==Country_names[i]),9])
+  country.97[20, "number_cases"] <- length(which(is.na(Dis_97$Country)==T))
+}
+
+country.97 <- transform(country.97, Country_names= reorder(Country_names, +number_cases))
+
+ggplot(data = country.97, aes(x = Country_names, y = number_cases, color=Country_names)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Country", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  ggtitle("Disimilares 97%")+
+  theme(legend.position="none")+
+  coord_flip()
+
+# Paises que fueron eliminados:
+# setdiff(country.similares$Country_names, country.disimilares$Country_names)
+
+```
+**Figura 2.** Paises para secuencias de Gen E 97% disimilares.
+
+India China Tailandia Indonesia Singapur VietNam Filipinas PuertoRico Pakistan Malasia Myanmar Brazil Australia Venezuela EstadosUnidos Timor Somalia Peru Paraguay Mexico PolinesaFrancesa Cambodia Yemen TrinidadYTobago Taiwan SriLanka SurCorea ArabiaSaudita Samoa SanVicenteYGranadas Rusia Nigeria Nicaragua NuevaCaledonia Japon Guam Francia Ecuador Cotedvoire Barbados Bangladesh Argentina
+
+```{r, fig.width = 10, fig.height = 8,echo = FALSE, message=FALSE, warning=FALSE}
+
+Country_names <- unique(Dis_98$Country)
+
+
+country.98 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  country.98[i,"Country_names"] <- Country_names[i]
+  country.98[i, "number_cases"] <- length(Dis_98[which(Dis_98$Country==Country_names[i]),9])
+  country.98[13, "number_cases"] <- length(which(is.na(Dis_98$Country)==T))
+}
+
+country.98 <- transform(country.98, Country_names= reorder(Country_names, +number_cases))
+
+ggplot(data = country.98, aes(x = Country_names, y = number_cases, color=Country_names)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Country", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  ggtitle("Disimilares 98%")+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+**Figura 3.** Paises para secuencias de Gen E 98% disimilares.
+
+India China Tailandia Indonesia Singapur VietNam Filipinas PuertoRico Pakistan Malasia Myanmar Brazil Australia Venezuela EstadosUnidos Timor Somalia Peru Paraguay Mexico PolinesaFrancesa Cambodia Yemen TrinidadYTobago Taiwan SriLanka SurCorea ArabiaSaudita Samoa SanVicenteYGranadas Rusia Nigeria Nicaragua NuevaCaledonia Japon Guam Francia Ecuador Cotedvoire Barbados Bangladesh Argentina Peru Honduras Colombia PapuaNuevaGuinea  ElSalvador IslaVirgen SurEsteAsia SantaLucia Martinique Laos Haiti Granada Ghana Fiji Angola
+
+```{r, fig.width = 10, fig.height = 9,echo = FALSE, message=FALSE, warning=FALSE}
+
+Country_names <- unique(Dis_99$Country)
+
+
+country.99<- data.frame()
+
+for(i in 1:length(Country_names)){
+  country.99[i,"Country_names"] <- Country_names[i]
+  country.99[i, "number_cases"] <- length(Dis_99[which(Dis_99$Country==Country_names[i]),9])
+  country.99[24, "number_cases"] <- length(which(is.na(Dis_99$Country)==T))
+}
+
+country.99 <- transform(country.99, Country_names= reorder(Country_names, +number_cases))
+
+ggplot(data = country.99, aes(x = Country_names, y = number_cases, color=Country_names)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Country", y= "Data Number")+
+  scale_color_grey(start= 0.7, end=0.1)+
+  theme_classic()+
+  ggtitle("Disimilares 99%")+
+  theme(legend.position="none")+
+  coord_flip()
+
+# Paises que fueron eliminados:
+# setdiff(country.similares$Country_names, country.disimilares$Country_names)
+
+
+```
+**Figura 4.** Paises para secuencias de Gen E 99% disimilares.
+
+
+### Mapa-Mundi: Numero de casos reportados por paises  ###
+
+
+```{r, fig.width = 10, fig.height = 17,echo = FALSE, message=FALSE, warning=FALSE}
+# Frecuencia de los paises con sus respectivas coordenadas
+# SIN DISCRIMMINAR POR SEROTIPOS
+
+library(rworldmap)
+library(ggplot2)
+
+# 98
+
+Country_names <- unique(Dis_98$Country)
+
+freg.country <- data.frame()
+
+for(i in 1:length(Country_names)){
+  freg.data <- Dis_98[which(Dis_98$Country == Country_names[i]),]
+  freg.country[i,"Country_names"] <- Country_names[i]
+  freg.country[i,"lat"] <- freg.data$lat_country[1]
+  freg.country[i,"lon"] <- freg.data$lon_country[1]
+  freg.country[i, "number_cases"] <- length(freg.data$Country)
+}
+
+freg.country <- na.omit(freg.country)
+
+# GRAFICA MAPA-MUNDI SIN DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+p <- ggplot()+ 
+  #theme(legend.position="none")+
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= freg.country, aes(x=lon, y=lat, size=number_cases), color="coral1" , alpha=0.5)+
+  ggtitle("Disismilaridad 98%")+
+  scale_size(name="Number of cases")
+
+
+# 97
+
+Country_names <- unique(Dis_97$Country)
+
+freg.country <- data.frame()
+
+for(i in 1:length(Country_names)){
+  freg.data <- Dis_97[which(Dis_97$Country == Country_names[i]),]
+  freg.country[i,"Country_names"] <- Country_names[i]
+  freg.country[i,"lat"] <- freg.data$lat_country[1]
+  freg.country[i,"lon"] <- freg.data$lon_country[1]
+  freg.country[i, "number_cases"] <- length(freg.data$Country)
+}
+
+freg.country <- na.omit(freg.country)
+
+# GRAFICA MAPA-MUNDI SIN DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+p1 <- ggplot()+ 
+  #theme(legend.position="none")+
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= freg.country, aes(x=lon, y=lat, size=number_cases), color="coral1" , alpha=0.5)+
+  ggtitle("Disismilaridad 97%")+
+  scale_size(name="Number of cases")
+
+
+# 99
+
+Country_names <- unique(Dis_99$Country)
+
+freg.country <- data.frame()
+
+for(i in 1:length(Country_names)){
+  freg.data <- Dis_99[which(Dis_99$Country == Country_names[i]),]
+  freg.country[i,"Country_names"] <- Country_names[i]
+  freg.country[i,"lat"] <- freg.data$lat_country[1]
+  freg.country[i,"lon"] <- freg.data$lon_country[1]
+  freg.country[i, "number_cases"] <- length(freg.data$Country)
+}
+
+freg.country <- na.omit(freg.country)
+
+# GRAFICA MAPA-MUNDI SIN DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+p2 <- ggplot()+ 
+  #theme(legend.position="none")+
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= freg.country, aes(x=lon, y=lat, size=number_cases), color="coral1" , alpha=0.5)+
+  ggtitle("Disismilaridad 99%")+
+  scale_size(name="Number of cases")
+
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+multiplot(p1,p,p2)
+
+```
+**Figura 5.** Numero de casos reportados por paises.
+
+
+### Mapa-mundi: Serotipos por paises ###
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+# 97
+
+Country_names <- na.omit(unique(Dis_97$Country))
+
+# Frecuencia de los serotipos en los paises registrados: 
+
+# SEROTIPO 1
+
+mundid_1 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_97[which(Dis_97$Serotype == "DENV_1" & Dis_97$Country == Country_names[i]),]
+  mundid_1[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_1[i,"Country_names"] <- Country_names[i]
+  mundid_1[i,"lat"] <- mini.data$lat_country[1]
+  mundid_1[i,"lon"] <- mini.data$lon_country[1]
+  mundid_1[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 2
+
+mundid_2 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_97[which(Dis_97$Serotype == "DENV_2" & Dis_97$Country == Country_names[i]),]
+  mundid_2[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_2[i,"Country_names"] <- Country_names[i]
+  mundid_2[i,"lat"] <- mini.data$lat_country[1]
+  mundid_2[i,"lon"] <- mini.data$lon_country[1]
+  mundid_2[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+#SEROTIPO 3
+
+mundid_3 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_97[which(Dis_97$Serotype == "DENV_3" & Dis_97$Country == Country_names[i]),]
+  mundid_3[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_3[i,"Country_names"] <- Country_names[i]
+  mundid_3[i,"lat"] <- mini.data$lat_country[1]
+  mundid_3[i,"lon"] <- mini.data$lon_country[1]
+  mundid_3[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+#SEROTIPO 4
+
+mundid_4 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_97[which(Dis_97$Serotype == "DENV_4" & Dis_97$Country == Country_names[i]),]
+  mundid_4[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_4[i,"Country_names"] <- Country_names[i]
+  mundid_4[i,"lat"] <- mini.data$lat_country[1]
+  mundid_4[i,"lon"] <- mini.data$lon_country[1]
+  mundid_4[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+
+data.mundi <- rbind(mundid_1,mundid_2,mundid_3,mundid_4)
+data.mundi <- na.omit(data.mundi)
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+mp1 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  ggtitle("Paises: Disimilaridad 97%")+
+  geom_point(data= data.mundi, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+mp1
+
+```
+**Figura 6.** Distribucion de los serotipos por paises para secuencias 97% disimilares.
+
+
+
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+# 98
+
+Country_names <- na.omit(unique(Dis_98$Country))
+
+# Frecuencia de los serotipos en los paises registrados: 
+
+# SEROTIPO 1
+
+mundis_1 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_98[which(Dis_98$Serotype == "DENV_1" & Dis_98$Country == Country_names[i]),]
+  mundis_1[i, "Serotype"] <- mini.data$Serotype[1]
+  mundis_1[i,"Country_names"] <- Country_names[i]
+  mundis_1[i,"lat"] <- mini.data$lat_country[1]
+  mundis_1[i,"lon"] <- mini.data$lon_country[1]
+  mundis_1[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 2
+
+mundis_2 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_98[which(Dis_98$Serotype == "DENV_2" & Dis_98$Country == Country_names[i]),]
+  mundis_2[i, "Serotype"] <- mini.data$Serotype[1]
+  mundis_2[i,"Country_names"] <- Country_names[i]
+  mundis_2[i,"lat"] <- mini.data$lat_country[1]
+  mundis_2[i,"lon"] <- mini.data$lon_country[1]
+  mundis_2[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+#SEROTIPO 3
+
+mundis_3 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_98[which(Dis_98$Serotype == "DENV_3" & Dis_98$Country == Country_names[i]),]
+  mundis_3[i, "Serotype"] <- mini.data$Serotype[1]
+  mundis_3[i,"Country_names"] <- Country_names[i]
+  mundis_3[i,"lat"] <- mini.data$lat_country[1]
+  mundis_3[i,"lon"] <- mini.data$lon_country[1]
+  mundis_3[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+#SEROTIPO 4
+
+mundis_4 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_98[which(Dis_98$Serotype == "DENV_4" & Dis_98$Country == Country_names[i]),]
+  mundis_4[i, "Serotype"] <- mini.data$Serotype[1]
+  mundis_4[i,"Country_names"] <- Country_names[i]
+  mundis_4[i,"lat"] <- mini.data$lat_country[1]
+  mundis_4[i,"lon"] <- mini.data$lon_country[1]
+  mundis_4[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+
+data.mundi <- rbind(mundis_1,mundis_2,mundis_3,mundis_4)
+data.mundi <- na.omit(data.mundi)
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+mp <-ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  ggtitle("Paises: Disimilaridad 98%")+
+  geom_point(data= data.mundi, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+mp
+
+```
+**Figura 7.** Distribucion de los serotipos por paises para secuencias 98% disimilares.
+
+```{r, fig.width = 10, fig.height = 6,echo = FALSE, message=FALSE, warning=FALSE}
+
+# 99
+
+Country_names <- na.omit(unique(Dis_99$Country))
+
+# Frecuencia de los serotipos en los paises registrados: 
+
+# SEROTIPO 1
+
+mundid_1 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_99[which(Dis_99$Serotype == "DENV_1" & Dis_99$Country == Country_names[i]),]
+  mundid_1[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_1[i,"Country_names"] <- Country_names[i]
+  mundid_1[i,"lat"] <- mini.data$lat_country[1]
+  mundid_1[i,"lon"] <- mini.data$lon_country[1]
+  mundid_1[i, "number_cases"] <- length(mini.data$Country)
+}
+
+#SEROTIPO 2
+
+mundid_2 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_99[which(Dis_99$Serotype == "DENV_2" & Dis_99$Country == Country_names[i]),]
+  mundid_2[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_2[i,"Country_names"] <- Country_names[i]
+  mundid_2[i,"lat"] <- mini.data$lat_country[1]
+  mundid_2[i,"lon"] <- mini.data$lon_country[1]
+  mundid_2[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+#SEROTIPO 3
+
+mundid_3 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_99[which(Dis_99$Serotype == "DENV_3" & Dis_99$Country == Country_names[i]),]
+  mundid_3[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_3[i,"Country_names"] <- Country_names[i]
+  mundid_3[i,"lat"] <- mini.data$lat_country[1]
+  mundid_3[i,"lon"] <- mini.data$lon_country[1]
+  mundid_3[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+#SEROTIPO 4
+
+mundid_4 <- data.frame()
+
+for(i in 1:length(Country_names)){
+  mini.data <- Dis_99[which(Dis_99$Serotype == "DENV_4" & Dis_99$Country == Country_names[i]),]
+  mundid_4[i, "Serotype"] <- mini.data$Serotype[1]
+  mundid_4[i,"Country_names"] <- Country_names[i]
+  mundid_4[i,"lat"] <- mini.data$lat_country[1]
+  mundid_4[i,"lon"] <- mini.data$lon_country[1]
+  mundid_4[i, "number_cases"] <- length(mini.data$Country)
+}
+
+
+
+data.mundi2 <- rbind(mundid_1,mundid_2,mundid_3,mundid_4)
+data.mundi2 <- na.omit(data.mundi)
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+mp2 <- ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  ggtitle("Paises: Disimilaridad 99%")+
+  geom_point(data= data.mundi2, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+mp2
+
+```
+**Figura 8.** Distribucion de los serotipos por paises para secuencias 99% disimilares.
+
+
+### Localidades: Disimilaridad 97% ###
+
+```{r, echo = FALSE, fig.width=9, fig.height=5, message=FALSE, warning=FALSE}
+
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library("RColorBrewer")
+
+location <- Dis_97[which(is.na(Dis_97$Location)==F),10]
+
+location <- gsub(" ", "", location)
+
+locorpus <- Corpus(VectorSource(location))
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+locorpus <- tm_map(locorpus, toSpace, "/")
+locorpus <- tm_map(locorpus, toSpace, "-")
+locorpus <- tm_map(locorpus, toSpace, "--")
+
+locorpus <- tm_map(locorpus, content_transformer(tolower))
+
+locorpus <- tm_map(locorpus, removeNumbers)
+
+locorpus <- tm_map(locorpus, removeWords, stopwords('english'))
+
+locorpus <- tm_map(locorpus, removeWords, c("blabla1", "blabla2")) 
+
+locorpus <- tm_map(locorpus, removePunctuation)
+
+locorpus <- tm_map(locorpus, stripWhitespace)
+
+dtm <- TermDocumentMatrix(locorpus)
+lomax <- as.matrix(dtm)
+vcation <- sort(rowSums(lomax),decreasing=TRUE)
+loframe <- data.frame(word = names(vcation),freq=vcation)
+
+
+wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,1), min.freq = 2,
+          max.words=2000, random.order=FALSE, rot.per=0.45,
+          colors=brewer.pal(12, "Paired"))
+
+
+```
+**Figura 9.** Nube de localidades para secuecias del Gen E 97% Disimilares.
+
+### Localidades: Disimilaridad 98% ###
+
+```{r, echo = FALSE, fig.width=9, fig.height=5, message=FALSE, warning=FALSE}
+
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library("RColorBrewer")
+
+location <- Dis_98[which(is.na(Dis_98$Location)==F),10]
+
+location <- gsub(" ", "", location)
+
+locorpus <- Corpus(VectorSource(location))
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+locorpus <- tm_map(locorpus, toSpace, "/")
+locorpus <- tm_map(locorpus, toSpace, "-")
+locorpus <- tm_map(locorpus, toSpace, "--")
+
+locorpus <- tm_map(locorpus, content_transformer(tolower))
+
+locorpus <- tm_map(locorpus, removeNumbers)
+
+locorpus <- tm_map(locorpus, removeWords, stopwords('english'))
+
+locorpus <- tm_map(locorpus, removeWords, c("blabla1", "blabla2")) 
+
+locorpus <- tm_map(locorpus, removePunctuation)
+
+locorpus <- tm_map(locorpus, stripWhitespace)
+
+dtm <- TermDocumentMatrix(locorpus)
+lomax <- as.matrix(dtm)
+vcation <- sort(rowSums(lomax),decreasing=TRUE)
+loframe <- data.frame(word = names(vcation),freq=vcation)
+
+
+wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,1), min.freq = 2,
+          max.words=2000, random.order=FALSE, rot.per=0.45,
+          colors=brewer.pal(12, "Paired"))
+
+
+```
+**Figura 10.** Nube de localidades para secuecias del Gen E 98% Disimilares.
+
+### Localidades: Disimilaridad 99% ###
+
+```{r, echo = FALSE, fig.width=9, fig.height=5, message=FALSE, warning=FALSE}
+
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library("RColorBrewer")
+
+location <- Dis_99[which(is.na(Dis_99$Location)==F),10]
+
+location <- gsub(" ", "", location)
+
+locorpus <- Corpus(VectorSource(location))
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+locorpus <- tm_map(locorpus, toSpace, "/")
+locorpus <- tm_map(locorpus, toSpace, "-")
+locorpus <- tm_map(locorpus, toSpace, "--")
+
+locorpus <- tm_map(locorpus, content_transformer(tolower))
+
+locorpus <- tm_map(locorpus, removeNumbers)
+
+locorpus <- tm_map(locorpus, removeWords, stopwords('english'))
+
+locorpus <- tm_map(locorpus, removeWords, c("blabla1", "blabla2")) 
+
+locorpus <- tm_map(locorpus, removePunctuation)
+
+locorpus <- tm_map(locorpus, stripWhitespace)
+
+dtm <- TermDocumentMatrix(locorpus)
+lomax <- as.matrix(dtm)
+vcation <- sort(rowSums(lomax),decreasing=TRUE)
+loframe <- data.frame(word = names(vcation),freq=vcation)
+
+
+wordcloud(words = loframe$word, freq = loframe$freq, scale = c(4,1), min.freq = 2,
+          max.words=2000, random.order=FALSE, rot.per=0.45,
+          colors=brewer.pal(12, "Paired"))
+
+
+```
+**Figura 11.** Nube de localidades para secuecias del Gen E 99% Disimilares.
+
+
+### Mapa-mundi localidades 97% Disimilaridad ###
+
+```{r, echo = FALSE, fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+
+location <- which(is.na(Dis_97$Location)==F)
+
+names_location <- unique(Dis_97[which(is.na(Dis_97$Location)==F),10])
+
+location_country_all <- vector()
+
+for(i in 1:length(location)){
+  location_country_all[i] <-  paste(Dis_97$Location[location[i]],",",Dis_97$Country[location[i]], sep = "")
+}
+
+
+location_country <- unique(location_country_all)
+
+# SEROTIPO 1
+
+SD1 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_97[which(Dis_97$Serotype=="DENV_1" & Dis_97$Location==names_location[i]),]
+  SD1[i, "Serotype"] <- mini.data$Serotype[1]
+  SD1[i,"location_names"] <- location_country[i]
+  SD1[i, "lat"] <- mini.data$lat_location[1]
+  SD1[i, "lon"] <- mini.data$lon_location[1]
+  SD1[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD1<- na.omit(SD1)
+
+# SEROTIPO 2
+
+SD2 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_97[which(Dis_97$Serotype=="DENV_2" & Dis_97$Location==names_location[i]),]
+  SD2[i, "Serotype"] <- mini.data$Serotype[1]
+  SD2[i,"location_names"] <- location_country[i]
+  SD2[i, "lat"] <- mini.data$lat_location[1]
+  SD2[i, "lon"] <- mini.data$lon_location[1]
+  SD2[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD2<- na.omit(SD2)
+
+# SEROTIPE 3
+
+SD3 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_97[which(Dis_97$Serotype=="DENV_3" & Dis_97$Location==names_location[i]),]
+  SD3[i, "Serotype"] <- mini.data$Serotype[1]
+  SD3[i,"location_names"] <- location_country[i]
+  SD3[i, "lat"] <- mini.data$lat_location[1]
+  SD3[i, "lon"] <- mini.data$lon_location[1]
+  SD3[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD3<- na.omit(SD3)
+
+# SEROTIPE 4
+
+SD4 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_97[which(Dis_97$Serotype=="DENV_4" & Dis_97$Location==names_location[i]),]
+  SD4[i, "Serotype"] <- mini.data$Serotype[1]
+  SD4[i,"location_names"] <- location_country[i]
+  SD4[i, "lat"] <- mini.data$lat_location[1]
+  SD4[i, "lon"] <- mini.data$lon_location[1]
+  SD4[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD4<- na.omit(SD4)
+
+mundi.location <- rbind(SD1,SD2,SD3,SD4)
+
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= mundi.location, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  ggtitle("Localidades: Disimilaridad 97%")+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+```
+**Figura 12.** Localidades de secuencias del Gen E 97% disimilares.
+
+
+### Mapa-mundi localidades 98% Disimilaridad ###
+
+```{r, echo = FALSE, fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+
+location <- which(is.na(Dis_98$Location)==F)
+
+names_location <- unique(Dis_98[which(is.na(Dis_98$Location)==F),10])
+
+location_country_all <- vector()
+
+for(i in 1:length(location)){
+  location_country_all[i] <-  paste(Dis_98$Location[location[i]],",",Dis_98$Country[location[i]], sep = "")
+}
+
+
+location_country <- unique(location_country_all)
+
+# SEROTIPO 1
+
+SS1 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_98[which(Dis_98$Serotype=="DENV_1" & Dis_98$Location==names_location[i]),]
+  SS1[i, "Serotype"] <- mini.data$Serotype[1]
+  SS1[i,"location_names"] <- location_country[i]
+  SS1[i, "lat"] <- mini.data$lat_location[1]
+  SS1[i, "lon"] <- mini.data$lon_location[1]
+  SS1[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SS1 <- na.omit(SS1)
+
+# SEROTIPO 2
+
+SS2 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_98[which(Dis_98$Serotype=="DENV_2" & Dis_98$Location==names_location[i]),]
+  SS2[i, "Serotype"] <- mini.data$Serotype[1]
+  SS2[i,"location_names"] <- location_country[i]
+  SS2[i, "lat"] <- mini.data$lat_location[1]
+  SS2[i, "lon"] <- mini.data$lon_location[1]
+  SS2[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SS2 <- na.omit(SS2)
+
+# SEROTIPE 3
+
+SS3 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_98[which(Dis_98$Serotype=="DENV_3" & Dis_98$Location==names_location[i]),]
+  SS3[i, "Serotype"] <- mini.data$Serotype[1]
+  SS3[i,"location_names"] <- location_country[i]
+  SS3[i, "lat"] <- mini.data$lat_location[1]
+  SS3[i, "lon"] <- mini.data$lon_location[1]
+  SS3[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SS3 <- na.omit(SS3)
+
+# SEROTIPE 4
+
+SS4 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_98[which(Dis_98$Serotype=="DENV_4" & Dis_98$Location==names_location[i]),]
+  SS4[i, "Serotype"] <- mini.data$Serotype[1]
+  SS4[i,"location_names"] <- location_country[i]
+  SS4[i, "lat"] <- mini.data$lat_location[1]
+  SS4[i, "lon"] <- mini.data$lon_location[1]
+  SS4[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SS4 <- na.omit(SS4)
+
+mundi.location <- rbind(SS1,SS2,SS3,SS4)
+
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= mundi.location, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  ggtitle("Localidaes: 98% Disimilaridad")+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+
+
+```
+**Figura 13.** Localidades de secuencias del Gen E 98% disimilares.
+
+### Mapa-mundi localidades 99% Disimilaridad ###
+```{r, echo = FALSE, fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+
+location <- which(is.na(Dis_99$Location)==F)
+
+names_location <- unique(Dis_99[which(is.na(Dis_99$Location)==F),10])
+
+location_country_all <- vector()
+
+for(i in 1:length(location)){
+  location_country_all[i] <-  paste(Dis_99$Location[location[i]],",",Dis_99$Country[location[i]], sep = "")
+}
+
+
+location_country <- unique(location_country_all)
+
+# SEROTIPO 1
+
+SD1 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_99[which(Dis_99$Serotype=="DENV_1" & Dis_99$Location==names_location[i]),]
+  SD1[i, "Serotype"] <- mini.data$Serotype[1]
+  SD1[i,"location_names"] <- location_country[i]
+  SD1[i, "lat"] <- mini.data$lat_location[1]
+  SD1[i, "lon"] <- mini.data$lon_location[1]
+  SD1[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD1<- na.omit(SD1)
+
+# SEROTIPO 2
+
+SD2 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_99[which(Dis_99$Serotype=="DENV_2" & Dis_99$Location==names_location[i]),]
+  SD2[i, "Serotype"] <- mini.data$Serotype[1]
+  SD2[i,"location_names"] <- location_country[i]
+  SD2[i, "lat"] <- mini.data$lat_location[1]
+  SD2[i, "lon"] <- mini.data$lon_location[1]
+  SD2[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD2<- na.omit(SD2)
+
+# SEROTIPE 3
+
+SD3 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_99[which(Dis_99$Serotype=="DENV_3" & Dis_99$Location==names_location[i]),]
+  SD3[i, "Serotype"] <- mini.data$Serotype[1]
+  SD3[i,"location_names"] <- location_country[i]
+  SD3[i, "lat"] <- mini.data$lat_location[1]
+  SD3[i, "lon"] <- mini.data$lon_location[1]
+  SD3[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD3<- na.omit(SD3)
+
+# SEROTIPE 4
+
+SD4 <- data.frame()
+
+for(i in 1:length(names_location)){
+  mini.data <- Dis_99[which(Dis_99$Serotype=="DENV_4" & Dis_99$Location==names_location[i]),]
+  SD4[i, "Serotype"] <- mini.data$Serotype[1]
+  SD4[i,"location_names"] <- location_country[i]
+  SD4[i, "lat"] <- mini.data$lat_location[1]
+  SD4[i, "lon"] <- mini.data$lon_location[1]
+  SD4[i, "number_cases"] <- length(mini.data$Location)
+}
+
+SD4<- na.omit(SD4)
+
+mundi.location1 <- rbind(SD1,SD2,SD3,SD4)
+
+
+# GRAFICA MAPA-MUNDI DIFERENCIADO POR SEROTIPOS
+
+map.world <- map_data(map="world")
+
+ggplot()+ 
+  geom_map(data=map.world, map=map.world, aes(map_id=region, x=long, y=lat), fill="white", colour="black", size=0.5)+
+  geom_point(data= mundi.location1, aes(x=lon, y=lat, color=Serotype),size=1.5, alpha=0.5)+
+  ggtitle("Localidades: Disimilaridad 99%")+
+  scale_color_manual(values=c("turquoise3","deeppink","mediumblue","green3"))
+
+
+```
+**Figura 14.** Localidades de secuencias del Gen E 99% disimilares.
+
+
+### Años: Disimilaridad 97% ###
+
+```{r, fig.width = 10, fig.height = 6, echo = FALSE}
+
+yearsD <- unique(Dis_97$Year)
+
+count_yearsD <- data.frame()
+
+for(i in 1:length(yearsD)){
+  count_yearsD[i, "Year"] <- yearsD[i]
+  count_yearsD[i, "number_year"] <- length(Dis_97[which(Dis_97$Year==yearsD[i]),10])
+  count_yearsD[3, "number_year"] <- length(which(is.na(Dis_97$Year)==T))
+}
+
+count_yearsD <- transform(count_yearsD, Year= reorder(Year, -number_year))
+ggplot(data = count_yearsD, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Data Number")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  ggtitle("Años: Disimilaridad 97%")+
+  theme(legend.position="none")+
+  coord_flip()
+
+# Años que fueron eliminados:
+# setdiff(count_yearsS$Year, count_yearsD$Year)
+
+#sort(count_yearsD$Year[1:37])
+
+```
+**Figura 15.** Años registrados para casos con secuencias 97% disimilares.
+
+1945 1960 1962 1963 1968 1970 1972 1973 1974 1978 1979 1980 1982 1983 1986 1988 1991 1993 1994 1995 1996 2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 20012 2013 2014 
+ 
+
+### Años: Disimilaridad 98% ###
+```{r, fig.width = 10, fig.height = 8, echo = FALSE}
+
+yearsS <- unique(Dis_98$Year)
+
+count_yearsS <- data.frame()
+
+for(i in 1:length(yearsS)){
+  count_yearsS[i, "Year"] <- yearsS[i]
+  count_yearsS[i, "number_year"] <- length(Dis_98[which(Dis_98$Year==yearsS[i]),10])
+  count_yearsS[3, "number_year"] <- length(which(is.na(Dis_98$Year)==T))
+}
+
+count_yearsS <- transform(count_yearsS, Year= reorder(Year, -number_year))
+ggplot(data = count_yearsS, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Data Number")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  ggtitle("Años: Disimilaridad 98%")+
+  theme(legend.position="none")+
+  coord_flip()
+
+```
+**Figura 16.** Años registrados para casos con secuencias 98% disimilares.
+
+1945 1960 1961 1962 1963 1965 1966 1968 1970 1972 1973 1974 1977 1978 1979 1980 1981 1982 1983 1985 1986 1987 1988 1989 1991 1993 1994 1995 1996 1997 1998 1999 2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014
+
+### Años: Disimilaridad 99% ### 
+```{r, fig.width = 10, fig.height = 9, echo = FALSE}
+
+yearsD <- unique(Dis_99$Year)
+
+count_yearsD <- data.frame()
+
+for(i in 1:length(yearsD)){
+  count_yearsD[i, "Year"] <- yearsD[i]
+  count_yearsD[i, "number_year"] <- length(Dis_99[which(Dis_99$Year==yearsD[i]),10])
+  count_yearsD[3, "number_year"] <- length(which(is.na(Dis_99$Year)==T))
+}
+
+count_yearsD <- transform(count_yearsD, Year= reorder(Year, -number_year))
+ggplot(data = count_yearsD, aes(x = Year, y = number_year, color=Year)) +
+  geom_bar(stat = "identity", fill="white")+
+  labs(x= "Year", y= "Data Number")+
+  scale_color_grey(start= 0.1, end=0.7)+
+  theme_classic()+
+  ggtitle("Años: Disimilaridad 99%")+
+  theme(legend.position="none")+
+  coord_flip()
+
+# Años que fueron eliminados:
+# setdiff(count_yearsS$Year, count_yearsD$Year)
+
+```
+**Figura 17.** Años registrados para casos con secuencias 99% disimilares.
+
+### Frecuencia de los años reportados por cada pais: Disimilaridad 97% ###
+```{r, fig.width = 18, fig.height = 10, echo = FALSE, message=FALSE, warning=FALSE}
+yearsD <- na.omit(unique(Dis_97$Year))
+
+Country_namesD <- na.omit(unique(Dis_97$Country))
+
+Country_year <- data.frame()
+Country_year_mas <- data.frame()
+for(i in 1:length(Country_namesD)){
+  for(j in 1:length(yearsD)){
+    co.data <- Dis_97[which(Dis_97$Country==Country_namesD[i] & Dis_97$Year==yearsD[j]),c(9,11)]
+    Country <- as.character(co.data$Country[1])
+    Yerano <- co.data$Year[1]
+    Number_cases <- length(co.data$Year)
+    subdata <- cbind(Country, Yerano, Number_cases)
+    Country_year <- rbind(Country_year,subdata)
+  }
+  Country_year_mas <- rbind(Country_year)
+}
+
+Country_year_mas <- na.omit(Country_year_mas)
+
+Country_year_mas$Number_cases <- as.character(Country_year_mas$Number_cases)
+Country_year_mas$Number_cases <- as.numeric(Country_year_mas$Number_cases)
+
+Country_year_mas$Yerano <- as.character(Country_year_mas$Yerano)
+Country_year_mas$Yerano <- as.numeric(Country_year_mas$Yerano)
+
+Country_year_mas <- transform(Country_year_mas, Yerano= reorder(Yerano, +Yerano))
+
+ggplot(Country_year_mas, aes(x=Yerano, y=Country)) + 
+  geom_point(aes(size=Number_cases))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+**Figura 18.** Frecuencia de los años reportados para cada pais para secuencias 97% disimilaridad.
+
+### Frecuencia de los años reportados por cada pais: Disimilaridad 98% ###
+
+```{r, fig.width = 18, fig.height = 10, echo = FALSE, message=FALSE, warning=FALSE}
+yearsS <- na.omit(unique(Dis_98$Year))
+
+Country_namesS <- na.omit(unique(Dis_98$Country))
+
+Country_year <- data.frame()
+Country_year_mas <- data.frame()
+for(i in 1:length(Country_namesS)){
+  for(j in 1:length(yearsS)){
+    co.data <- Dis_98[which(Dis_98$Country==Country_namesS[i] & Dis_98$Year==yearsS[j]),c(9,11)]
+    Country <- as.character(co.data$Country[1])
+    Yerano <- co.data$Year[1]
+    Number_cases <- length(co.data$Year)
+    subdata <- cbind(Country, Yerano, Number_cases)
+    Country_year <- rbind(Country_year,subdata)
+  }
+  Country_year_mas <- rbind(Country_year)
+}
+
+Country_year_mas <- na.omit(Country_year_mas)
+
+Country_year_mas$Number_cases <- as.character(Country_year_mas$Number_cases)
+Country_year_mas$Number_cases <- as.numeric(Country_year_mas$Number_cases)
+
+Country_year_mas$Yerano <- as.character(Country_year_mas$Yerano)
+Country_year_mas$Yerano <- as.numeric(Country_year_mas$Yerano)
+
+Country_year_mas <- transform(Country_year_mas, Yerano= reorder(Yerano, +Yerano))
+
+ggplot(Country_year_mas, aes(x=Yerano, y=Country)) + 
+  geom_point(aes(size=Number_cases))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+**Figura 19.** Frecuencia de los años reportados para cada pais para secuencias 98% disimilaridad.
+
+### Frecuencia de los años reportados por cada pais: Disimilaridad 99% ###
+
+```{r, fig.width = 18, fig.height = 10, echo = FALSE, message=FALSE, warning=FALSE}
+yearsD <- na.omit(unique(Dis_99$Year))
+
+Country_namesD <- na.omit(unique(Dis_99$Country))
+
+Country_year <- data.frame()
+Country_year_mas <- data.frame()
+for(i in 1:length(Country_namesD)){
+  for(j in 1:length(yearsD)){
+    co.data <- Dis_99[which(Dis_99$Country==Country_namesD[i] & Dis_99$Year==yearsD[j]),c(9,11)]
+    Country <- as.character(co.data$Country[1])
+    Yerano <- co.data$Year[1]
+    Number_cases <- length(co.data$Year)
+    subdata <- cbind(Country, Yerano, Number_cases)
+    Country_year <- rbind(Country_year,subdata)
+  }
+  Country_year_mas <- rbind(Country_year)
+}
+
+Country_year_mas <- na.omit(Country_year_mas)
+
+Country_year_mas$Number_cases <- as.character(Country_year_mas$Number_cases)
+Country_year_mas$Number_cases <- as.numeric(Country_year_mas$Number_cases)
+
+Country_year_mas$Yerano <- as.character(Country_year_mas$Yerano)
+Country_year_mas$Yerano <- as.numeric(Country_year_mas$Yerano)
+
+Country_year_mas <- transform(Country_year_mas, Yerano= reorder(Yerano, +Yerano))
+
+ggplot(Country_year_mas, aes(x=Yerano, y=Country)) + 
+  geom_point(aes(size=Number_cases))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+**Figura 20.** Frecuencia de los años reportados para cada pais para secuencias 99% disimilaridad.
+
+
+### Pais, localidad y año ###
+
+
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+
+
+# 97
+Data_Number <- c(length(which(is.na(Dis_97$Country)==F)),
+                 length(which(is.na(Dis_97$Location)==F)),
+                 length(which(is.na(Dis_97$Country)==F &
+                                is.na(Dis_97$Year)==F)),
+                 length(which(is.na(Dis_97$Country)==F &
+                                is.na(Dis_97$Location)==F &
+                                is.na(Dis_97$Year)==F)))
+
+
+Data <- c("Country", "Country_Location", "Country_year", "Country_location_year")
+
+dt_97 <- data.frame(Data, Data_Number)
+
+# 98
+Data_Number <- c(length(which(is.na(Dis_98$Country)==F)),
+                 length(which(is.na(Dis_98$Location)==F)),
+                 length(which(is.na(Dis_98$Country)==F &
+                                is.na(Dis_98$Year)==F)),
+                 length(which(is.na(Dis_98$Country)==F &
+                                is.na(Dis_98$Location)==F &
+                                is.na(Dis_98$Year)==F)))
+
+Data <- c("Country", "Country_Location", "Country_year", "Country_location_year")
+
+dt_98 <- data.frame(Data, Data_Number)
+
+# 99
+Data_Number <- c(length(which(is.na(Dis_99$Country)==F)),
+                 length(which(is.na(Dis_99$Location)==F)),
+                 length(which(is.na(Dis_99$Country)==F &
+                                is.na(Dis_99$Year)==F)),
+                 length(which(is.na(Dis_99$Country)==F &
+                                is.na(Dis_99$Location)==F &
+                                is.na(Dis_99$Year)==F)))
+
+Data <- c("Country", "Country_Location", "Country_year", "Country_location_year")
+
+dt_99 <- data.frame(Data, Data_Number)
+
+Coloye <- rbind(dt_97, dt_98, dt_99)
+
+type <- c("97 % Disimilaridad", "97 % Disimilaridad", "97 % Disimilaridad", "97 % Disimilaridad", "98 % Disimilaridad", "98 % Disimilaridad", "98 % Disimilaridad", "98 % Disimilaridad", "99 % Disimilaridad", "99 % Disimilaridad", "99 % Disimilaridad", "99 % Disimilaridad")
+
+Coloye <- cbind(Coloye, type)
+
+library("ggplot2")
+
+ggplot(data = Coloye, aes(x=Data , y = Data_Number, fill=type))+
+  geom_bar(stat = "identity", position=position_dodge())+
+  ggtitle("Pais, Localidad y Años: Disimilaridad 97, 98, 99%")+
+  scale_colour_brewer()+
+  theme_minimal()
+
+#ggplot(data = serotype, aes(x=Name_serotype , y = data, fill=type))+
+ # geom_bar(stat = "identity", position=position_dodge())+
+  #scale_colour_brewer()+
+  #theme_minimal()
+
+
+```
+**Figura 21.** Frecuencia de los datos con disimilaridad del 97, 98 y 99% que contienen: 1. Pais, 2. Pais y Localidad, 3. Pais, Localidad y año, 4. Pais y año.
