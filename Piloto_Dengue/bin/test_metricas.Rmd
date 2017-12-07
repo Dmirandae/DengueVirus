@@ -1,0 +1,786 @@
+---
+title: "Testeando las metricas de distancia de k-mer"
+output: html_notebook
+---
+
+Se plantean diferentes escenarios de comparaciones entre secuencias de ADN y se observan los resultados de cada metrica sobre las distancias entre estas.  
+
+### Caso 1: 
+Conocer los minimos y maximos de cada metrica.
+
+2 secuencias iguales y 1 que no comparte ninguna tripleta con las demás. 
+
+* seq 1 = "AGCGTACGTAGCG" (igual a seq 3 y comparte una tripleta con seq 2)
+* seq 2 = "TCAGGTCATCAGG" (Comparte una secuencias con 1 y 3)
+* seq 3 = "AGCGTACGTAGCG"
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+seq <- c("AGCGTACGTAGCG", "TCAGGTCATCAGG", "AGCGTACGTAGCG")
+
+# seq 1 = "AGCGTACGTAGCG"
+# seq 2 = "TCAGGTCATCAGG"
+# seq 3 = "AGCGTACGTAGCG"
+# seq 4 = "CGGTTACATCGGT"
+# seq 5 = "CACGCTAGACTAT"
+
+# Conteo de k-mers para tripletas k=3
+
+library(stringi)
+
+kmer3 <-  paste(rep(c("A","C","G","T"),each=16),rep(c("A","C","G","T"),each=4),c("A","C","G","T"),sep = "")
+
+
+result <- t(sapply(seq, stri_count_fixed, pattern=kmer3, overlap=TRUE))
+colnames(result) <- kmer3 
+result <- as.data.frame(result)
+```
+
+
+#### Dist. Euclidiana ####
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+########################
+# Distancia Euclidiana #
+# sum(p(s1)-p(s2))^2  ##
+########################
+
+Euclidian <- function(table){
+  distE <- matrix(0,nrow(table),nrow(table))
+  for (i in 1:nrow(table)){
+    for (j in 1:nrow(table)){
+      distE[i,j] <- sum((table[i,]-table[j,])^2)
+    }
+  }
+  return(distE)
+}
+
+Euclidiana <- Euclidian(result)
+Euclidiana
+```
+- Distancia minima: 0
+- Distanca maxima: 40
+
+
+#### Dist. Mahalanobis ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+###################
+# Dist Mahalanobis #
+####################
+
+#Calculo de capacidad de solapamiento para todas las tripletas posibles
+
+library(reshape2)
+kmerspt <- colsplit(kmer3, "", names=c(1,2,3))
+
+overlap <- data.frame()
+for(i in 1:nrow(kmerspt)){
+  for(j in 1:ncol(kmerspt)){
+    overlap[i,1] <- as.numeric(kmerspt[i,3]==kmerspt[i,1])
+    overlap[i,2] <- as.numeric(kmerspt[i,3]==kmerspt[i,2])
+  }
+}
+
+rownames(overlap) <- kmer3
+
+#Calculo de la longitud de cada una de las secuencias
+# N ---> las longitudes de todas las secuencias
+
+lonN <- data.frame()
+
+for (i in 1:length(seq)){
+  lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
+}
+
+
+# Funcion de la varianza para k = 3
+# Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
+
+Varian <- function(table1, table2, k=3){
+  vari <- data.frame()
+  for(i in 1:nrow(table1)){
+    for(j in 1:nrow(table2)){
+      vari[i,j] <- (((table1[i,1]-k+1)*(1/4)^k) * (1-((table1[i,1]-k+1)*(1/4)^k)) + ((((1/4)^k)^2)*((table1[i,1]-k+1)-k)*((table1[i,1]-k+1)-k+1)) + (2*(1/4)^k) * sum(((table1[i,1]-k+1)-1)*(sum(table2[j,]))*((1/4)^1)))   
+    }
+  }
+  return(vari)
+}
+
+varianza <- Varian(lonN,overlap)
+colnames(varianza) <- kmer3
+
+# Calculo de la Distancia de mahalanobis
+
+nobis <- data.frame()
+for (i in 1:nrow(result)){
+  for (j in 1:nrow(varianza)){
+    nobis[i,j] <- sum(((result[i,]/varianza[i,])-(result[j,]/varianza[j,]))^2)
+  }
+}
+
+Mahalanobis <- nobis
+
+as.matrix(Mahalanobis)
+```
+- Distancia minima: 0
+- Distanca maxima: 1392.563
+
+
+#### Dist. Conteo comun de k-mer ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+#########################################################
+# Distancia Conteo comun de k-mer                      ##
+#########################################################
+
+# Calculo de los minimos entre las frecuencias por pares de secuencias
+
+soul_sal <- data.frame()
+
+for(i in 1:ncol(result)){
+  soul <- vector()
+  for(f in 1:length(result[,i])){
+    for(ty in 1:length(result[,i])){
+      soul <- c(soul, min(c(result[f,i], result[ty,i])))
+    }
+  }
+  soul_sal[1:9,i] <- soul
+}
+
+sume <- t(apply(soul_sal, 1, sum))
+sume <- as.data.frame(t(sume))
+
+# Calculo de lo minimos entre las longitudes por pares de secuencias
+
+minlon <- vector()
+for (i in 1:nrow(lonN)){
+  algo <- 1:length(lonN[,1])
+  for(n in algo){
+    minlon <- c(minlon,min(lonN[i,1],lonN[n,1]))
+  }
+}
+min_lon <- as.data.frame(minlon)
+
+###
+# Calculo de la ecuacion completa
+# Fraccional k-mer common
+
+
+Fractional <- function(table, table1, k=3){ # sume, minlon
+  commonk <- data.frame()
+  for(j in 1:nrow(table)){
+    commonk[1,j] <- 1- (table[j,1]/(table1[j,1]-k+1))
+  }
+  return(commonk)
+}
+
+Fractional_common <- Fractional(sume, min_lon)
+
+#Construcción de la matriz para Fraccional k-mer common
+common <- Fractional_common$V1
+
+mmtx <- matrix(data = Fractional_common, nrow = 3, ncol = 3, byrow = FALSE,
+       dimnames = NULL)
+
+mmtx
+
+```
+- Distancia minima: 0
+- Distanca maxima: 1
+
+### Caso 2: 
+2 secuencias iguales y 1 que comparte 1, 2 y 3 tripletas con las demás. 
+
+* seq 1 = "AGCGTACGTAGCG"
+* seq 2 = "TCAGGTCATCAGG" (Comparte 3 tripletas con 4)
+* seq 3 = "AGCGTACGTAGCG"
+* seq 4 = "CGGTTACATCGGT" (Comparte 1 tripleta con 1 y 3 )
+* seq 5 = "CACGCTAGACTAT" (Comparte 2 tripletas con 1 y 3)
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+seq <- c("TCAGGTCATCAGG", "CGGTTACATCGGT", "TCAGGTCATCAGG")
+
+# seq 1 = "AGCGTACGTAGCG"
+# seq 2 = "TCAGGTCATCAGG"
+# seq 3 = "AGCGTACGTAGCG"
+# seq 4 = "CGGTTACATCGGT"
+# seq 5 = "CACGCTAGACTAT"
+
+# Conteo de k-mers para tripletas k=3
+
+library(stringi)
+
+kmer3 <-  paste(rep(c("A","C","G","T"),each=16),rep(c("A","C","G","T"),each=4),c("A","C","G","T"),sep = "")
+
+
+result <- t(sapply(seq, stri_count_fixed, pattern=kmer3, overlap=TRUE))
+colnames(result) <- kmer3 
+result <- as.data.frame(result)
+```
+
+
+#### Dist. Euclidiana ####
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+########################
+# Distancia Euclidiana #
+# sum(p(s1)-p(s2))^2  ##
+########################
+
+Euclidian <- function(table){
+  distE <- matrix(0,nrow(table),nrow(table))
+  for (i in 1:nrow(table)){
+    for (j in 1:nrow(table)){
+      distE[i,j] <- sum((table[i,]-table[j,])^2)
+    }
+  }
+  return(distE)
+}
+
+Euclidiana <- Euclidian(result)
+
+Euclidiana
+
+```
+- Distancia con 1 tripleta compartida: 32
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+Euclidiana2 <- Euclidian(result)
+
+
+Euclidiana2
+
+```
+- Distancia con 2 tripletas compartidas: 28
+
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+Euclidiana3 <- Euclidian(result)
+
+
+Euclidiana3
+
+```
+- Distancia con 3 tripletas compartidas: 28
+
+
+#### Dist. Mahalanobis ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+###################
+# Dist Mahalanobis #
+####################
+
+#Calculo de capacidad de solapamiento para todas las tripletas posibles
+
+library(reshape2)
+kmerspt <- colsplit(kmer3, "", names=c(1,2,3))
+
+overlap <- data.frame()
+for(i in 1:nrow(kmerspt)){
+  for(j in 1:ncol(kmerspt)){
+    overlap[i,1] <- as.numeric(kmerspt[i,3]==kmerspt[i,1])
+    overlap[i,2] <- as.numeric(kmerspt[i,3]==kmerspt[i,2])
+  }
+}
+
+rownames(overlap) <- kmer3
+
+#Calculo de la longitud de cada una de las secuencias
+# N ---> las longitudes de todas las secuencias
+
+lonN <- data.frame()
+
+for (i in 1:length(seq)){
+  lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
+}
+
+
+# Funcion de la varianza para k = 3
+# Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
+
+Varian <- function(table1, table2, k=3){
+  vari <- data.frame()
+  for(i in 1:nrow(table1)){
+    for(j in 1:nrow(table2)){
+      vari[i,j] <- (((table1[i,1]-k+1)*(1/4)^k) * (1-((table1[i,1]-k+1)*(1/4)^k)) + ((((1/4)^k)^2)*((table1[i,1]-k+1)-k)*((table1[i,1]-k+1)-k+1)) + (2*(1/4)^k) * sum(((table1[i,1]-k+1)-1)*(sum(table2[j,]))*((1/4)^1)))   
+    }
+  }
+  return(vari)
+}
+
+varianza <- Varian(lonN,overlap)
+colnames(varianza) <- kmer3
+
+# Calculo de la Distancia de mahalanobis
+
+nobis <- data.frame()
+for (i in 1:nrow(result)){
+  for (j in 1:nrow(varianza)){
+    nobis[i,j] <- sum(((result[i,]/varianza[i,])-(result[j,]/varianza[j,]))^2)
+  }
+}
+
+Mahalanobis <- nobis
+
+Mahalanobis <- as.matrix(Mahalanobis)
+
+Mahalanobis
+
+```
+- Distancia con 1 tripleta compartida: 1036.806
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+Mahalanobis2 <- as.matrix(Mahalanobis)
+
+Mahalanobis2
+```
+- Distancia con 2 tripletas compartidas: 923.2979
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+Mahalanobis3 <- as.matrix(Mahalanobis)
+
+Mahalanobis3
+```
+- Distancia con 3 tripletas compartidas: 880.38843
+
+#### Dist. Conteo comun de k-mer ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+#########################################################
+# Distancia Conteo comun de k-mer                      ##
+#########################################################
+
+# Calculo de los minimos entre las frecuencias por pares de secuencias
+
+soul_sal <- data.frame()
+
+for(i in 1:ncol(result)){
+  soul <- vector()
+  for(f in 1:length(result[,i])){
+    for(ty in 1:length(result[,i])){
+      soul <- c(soul, min(c(result[f,i], result[ty,i])))
+    }
+  }
+  soul_sal[1:9,i] <- soul
+}
+
+sume <- t(apply(soul_sal, 1, sum))
+sume <- as.data.frame(t(sume))
+
+# Calculo de lo minimos entre las longitudes por pares de secuencias
+
+minlon <- vector()
+for (i in 1:nrow(lonN)){
+  algo <- 1:length(lonN[,1])
+  for(n in algo){
+    minlon <- c(minlon,min(lonN[i,1],lonN[n,1]))
+  }
+}
+min_lon <- as.data.frame(minlon)
+
+###
+# Calculo de la ecuacion completa
+# Fraccional k-mer common
+
+
+Fractional <- function(table, table1, k=3){ # sume, minlon
+  commonk <- data.frame()
+  for(j in 1:nrow(table)){
+    commonk[1,j] <- 1- (table[j,1]/(table1[j,1]-k+1))
+  }
+  return(commonk)
+}
+
+Fractional_common <- Fractional(sume, min_lon)
+
+#Construcción de la matriz para Fraccional k-mer common
+
+mmtx <- matrix(data = Fractional_common, nrow = 3, ncol = 3, byrow = FALSE,
+       dimnames = NULL)
+
+Common <- mmtx
+
+Common
+
+```
+- Distancia con 1 tripleta compartida: 0.9
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+Common2 <- mmtx
+
+Common2
+```
+- Distancia con 2 tripletas compartidas: 0.81
+
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+Common3 <- mmtx
+
+Common3
+```
+- Distancia con 3 tripletas compartidas: 0.72
+
+### Caso 3: 
+Que pasa cuando dos secuencias comparten tripletas pero con diferente frecuencia? y que pasa cuando dos secuencias comparten repeticiones como "AAAAAA"?
+
+* seq 2 = "TCAGGTCATCAGG" (3 tripletas con seq 4, 1 tripleta con diferente frecuencia con seq 6 (relacion 3:1) y seq 7 (relacion 2:1))
+* seq 4 = "CGGTTACATCGGT" ( 0 tripletas con seq 6 y 7)
+* seq 6 = "TCAAAAAAGCTAG" (3 tripletas y una de ellas con frecuencia de 4(AAAAAA) con seq 7)
+* seq 7 = "CAGTAAAAAAGCT"
+
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+seq <- c("TCAGGTCATCAGG", "CGGTTACATCGGT", "TCAAAAAAGCTAG", "CAGTAAAAAAGCT")
+
+# seq 1 = "AGCGTACGTAGCG"
+# seq 2 = "TCAGGTCATCAGG"
+# seq 3 = "AGCGTACGTAGCG"
+# seq 4 = "CGGTTACATCGGT"
+# seq 5 = "CACGCTAGACTAT"
+# seq 6 = "TCAAAAAAGCTAG"
+# seq 7 = "CAGTAAAAAAGCT"
+
+# Conteo de k-mers para tripletas k=3
+
+library(stringi)
+
+kmer3 <-  paste(rep(c("A","C","G","T"),each=16),rep(c("A","C","G","T"),each=4),c("A","C","G","T"),sep = "")
+
+
+result <- t(sapply(seq, stri_count_fixed, pattern=kmer3, overlap=TRUE))
+colnames(result) <- kmer3 
+result <- as.data.frame(result)
+```
+
+
+#### Dist. Euclidiana ####
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+########################
+# Distancia Euclidiana #
+# sum(p(s1)-p(s2))^2  ##
+########################
+
+Euclidian <- function(table){
+  distE <- matrix(0,nrow(table),nrow(table))
+  for (i in 1:nrow(table)){
+    for (j in 1:nrow(table)){
+      distE[i,j] <- sum((table[i,]-table[j,])^2)
+    }
+  }
+  return(distE)
+}
+
+Euclidiana <- Euclidian(result)
+Euclidiana
+```
+- Distancia es mayor cuando dos secuencias comparten una tripleta con frecuencia diferente que cuando la frecuencia es la misma (1 y 3 - 1 y 4)
+- Distancia es mayor cuando la relacion entre las frecuencias es 2:1 (1 y 4), que cuando la relacion entre la frecuencia es 3:1 (1 y 3) para una tripleta compartida.
+- Si dos secuencias comparten 3 tripletas con igual frecuencia pero una de las tripletas tiene una frecuencia alta (en este caso 4) (3 y 4 ), la distancia sera mucho menor a que si las frecuencias son de 1 en todas las tripletas (1 y 2).
+
+
+#### Dist. Mahalanobis ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+###################
+# Dist Mahalanobis #
+####################
+
+#Calculo de capacidad de solapamiento para todas las tripletas posibles
+
+library(reshape2)
+kmerspt <- colsplit(kmer3, "", names=c(1,2,3))
+
+overlap <- data.frame()
+for(i in 1:nrow(kmerspt)){
+  for(j in 1:ncol(kmerspt)){
+    overlap[i,1] <- as.numeric(kmerspt[i,3]==kmerspt[i,1])
+    overlap[i,2] <- as.numeric(kmerspt[i,3]==kmerspt[i,2])
+  }
+}
+
+rownames(overlap) <- kmer3
+
+#Calculo de la longitud de cada una de las secuencias
+# N ---> las longitudes de todas las secuencias
+
+lonN <- data.frame()
+
+for (i in 1:length(seq)){
+  lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
+}
+
+
+# Funcion de la varianza para k = 3
+# Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
+
+Varian <- function(table1, table2, k=3){
+  vari <- data.frame()
+  for(i in 1:nrow(table1)){
+    for(j in 1:nrow(table2)){
+      vari[i,j] <- (((table1[i,1]-k+1)*(1/4)^k) * (1-((table1[i,1]-k+1)*(1/4)^k)) + ((((1/4)^k)^2)*((table1[i,1]-k+1)-k)*((table1[i,1]-k+1)-k+1)) + (2*(1/4)^k) * sum(((table1[i,1]-k+1)-1)*(sum(table2[j,]))*((1/4)^1)))   
+    }
+  }
+  return(vari)
+}
+
+varianza <- Varian(lonN,overlap)
+colnames(varianza) <- kmer3
+
+# Calculo de la Distancia de mahalanobis
+
+nobis <- data.frame()
+for (i in 1:nrow(result)){
+  for (j in 1:nrow(varianza)){
+    nobis[i,j] <- sum(((result[i,]/varianza[i,])-(result[j,]/varianza[j,]))^2)
+  }
+}
+
+Mahalanobis <- nobis
+
+as.matrix(Mahalanobis)
+```
+- Distancia es mayor cuando dos secuencias comparten una tripleta con frecuencia diferente que cuando la frecuencia es la misma (1 y 3 Vs 1 y 4)
+- Distancia es mayor cuando la relacion entre las frecuencias es 2:1 (1 y 4), que cuando la relacion entre la frecuencia es 3:1 (1 y 3) para una tripleta compartida.
+- Si dos secuencias compartes 3 tripletas con igual frecuencia pero una de las tripletas tiene una frecuencia alta (en este caso 4) (3 y 4) la distancia sera mucho menor a que si las frecuencias son de 1 en todas las tripletas (1 y 2).
+
+#### Dist. Conteo comun de k-mer ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+#########################################################
+# Distancia Conteo comun de k-mer                      ##
+#########################################################
+
+# Calculo de los minimos entre las frecuencias por pares de secuencias
+
+soul_sal <- data.frame()
+
+for(i in 1:ncol(result)){
+  soul <- vector()
+  for(f in 1:length(result[,i])){
+    for(ty in 1:length(result[,i])){
+      soul <- c(soul, min(c(result[f,i], result[ty,i])))
+    }
+  }
+  soul_sal[1:16,i] <- soul
+}
+
+sume <- t(apply(soul_sal, 1, sum))
+sume <- as.data.frame(t(sume))
+
+# Calculo de lo minimos entre las longitudes por pares de secuencias
+
+minlon <- vector()
+for (i in 1:nrow(lonN)){
+  algo <- 1:length(lonN[,1])
+  for(n in algo){
+    minlon <- c(minlon,min(lonN[i,1],lonN[n,1]))
+  }
+}
+min_lon <- as.data.frame(minlon)
+
+###
+# Calculo de la ecuacion completa
+# Fraccional k-mer common
+
+
+Fractional <- function(table, table1, k=3){ # sume, minlon
+  commonk <- data.frame()
+  for(j in 1:nrow(table)){
+    commonk[1,j] <- 1- (table[j,1]/(table1[j,1]-k+1))
+  }
+  return(commonk)
+}
+
+Fractional_common <- Fractional(sume, min_lon)
+
+#Construcción de la matriz para Fraccional k-mer common
+common <- Fractional_common$V1
+
+mmtx <- matrix(data = Fractional_common, nrow = 4, ncol = 4, byrow = FALSE,
+       dimnames = NULL)
+
+mmtx
+
+```
+
+- Distancia es igualr cuando dos secuencias comparten una tripleta con frecuencia diferente que cuando la frecuencia es la misma (1 y 3 Vs 1 y 4)
+- Distancia es igual cuando la relacion entre las frecuencias es 2:1 (1 y 4), y cuando la relacion entre la frecuencia es 3:1 (1 y 3) para una tripleta compartida.
+- Si dos secuencias comparten 3 tripletas con igual frecuencia pero una de las tripletas tiene una frecuencia alta (en este caso 4) (3 y 4) la distancia sera mucho menor a que si las frecuencias son de 1 en todas las tripletas (1 y 2).
+
+### Caso 4: 
+Cumplen las tres metricas con las propiedades de una metrica de distancia?
+
+* seq 1 = "AGCGTACGTAGCG"
+* seq 4 = "CGGTTACATCGGT" 
+* seq 5 = "CACGCTAGACTAT"
+* seq 6 = "TCAAAAAAGCTAG" 
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+seq <- c("AGCGTACGTAGCG", "CGGTTACATCGGT" , "CACGCTAGACTAT", "TCAAAAAAGCTAG")
+
+# seq 1 = "AGCGTACGTAGCG"
+# seq 2 = "TCAGGTCATCAGG"
+# seq 3 = "AGCGTACGTAGCG"
+# seq 4 = "CGGTTACATCGGT"
+# seq 5 = "CACGCTAGACTAT"
+# seq 6 = "TCAAAAAAGCTAG"
+# seq 7 = "CAGTAAAAAAGCT"
+
+# Conteo de k-mers para tripletas k=3
+
+library(stringi)
+
+kmer3 <-  paste(rep(c("A","C","G","T"),each=16),rep(c("A","C","G","T"),each=4),c("A","C","G","T"),sep = "")
+
+
+result <- t(sapply(seq, stri_count_fixed, pattern=kmer3, overlap=TRUE))
+colnames(result) <- kmer3 
+result <- as.data.frame(result)
+```
+
+
+#### Dist. Euclidiana ####
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+########################
+# Distancia Euclidiana #
+# sum(p(s1)-p(s2))^2  ##
+########################
+
+Euclidian <- function(table){
+  distE <- matrix(0,nrow(table),nrow(table))
+  for (i in 1:nrow(table)){
+    for (j in 1:nrow(table)){
+      distE[i,j] <- sum((table[i,]-table[j,])^2)
+    }
+  }
+  return(distE)
+}
+
+Euclidiana <- Euclidian(result)
+Euclidiana
+```
+- Positividad: d(1,2) > 0   &   d(1,1) = 0  -->  1=1
+- Simetria: d(1,2) = d(2,1) --> 32 = 32
+- Inequidad del triangula: d(1,2) + d(2,3) >/= d(1,3) --> 32 + 28 > 28
+
+#### Dist. Mahalanobis ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+###################
+# Dist Mahalanobis #
+####################
+
+#Calculo de capacidad de solapamiento para todas las tripletas posibles
+
+library(reshape2)
+kmerspt <- colsplit(kmer3, "", names=c(1,2,3))
+
+overlap <- data.frame()
+for(i in 1:nrow(kmerspt)){
+  for(j in 1:ncol(kmerspt)){
+    overlap[i,1] <- as.numeric(kmerspt[i,3]==kmerspt[i,1])
+    overlap[i,2] <- as.numeric(kmerspt[i,3]==kmerspt[i,2])
+  }
+}
+
+rownames(overlap) <- kmer3
+
+#Calculo de la longitud de cada una de las secuencias
+# N ---> las longitudes de todas las secuencias
+
+lonN <- data.frame()
+
+for (i in 1:length(seq)){
+  lonN[i,1] <- length(strsplit(as.character(seq[i]), NULL)[[1]])
+}
+
+
+# Funcion de la varianza para k = 3
+# Var[f(a1..ak)] = E (1-1/4^k) - 2/4^2k (k-1)(N-(3/2K)+1) + 2/4^k sum(N-K+1-t) Jt/4^t
+
+Varian <- function(table1, table2, k=3){
+  vari <- data.frame()
+  for(i in 1:nrow(table1)){
+    for(j in 1:nrow(table2)){
+      vari[i,j] <- (((table1[i,1]-k+1)*(1/4)^k) * (1-((table1[i,1]-k+1)*(1/4)^k)) + ((((1/4)^k)^2)*((table1[i,1]-k+1)-k)*((table1[i,1]-k+1)-k+1)) + (2*(1/4)^k) * sum(((table1[i,1]-k+1)-1)*(sum(table2[j,]))*((1/4)^1)))   
+    }
+  }
+  return(vari)
+}
+
+varianza <- Varian(lonN,overlap)
+colnames(varianza) <- kmer3
+
+# Calculo de la Distancia de mahalanobis
+
+nobis <- data.frame()
+for (i in 1:nrow(result)){
+  for (j in 1:nrow(varianza)){
+    nobis[i,j] <- sum(((result[i,]/varianza[i,])-(result[j,]/varianza[j,]))^2)
+  }
+}
+
+Mahalanobis <- nobis
+
+as.matrix(Mahalanobis)
+```
+- Positividad: d(1,2) > 0  &  d(1,1) = 0 --> 1=1
+- Simetria: d(1,2) = d(2,1) --> 1036.8061 = 1036.8061
+- Inequidad del triangula: d(1,2) + d(2,3) >/= d(1,3) --> 1036.8061 + 880.3843 > 923.2979
+
+
+#### Dist. Conteo comun de k-mer ###
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+#########################################################
+# Distancia Conteo comun de k-mer                      ##
+#########################################################
+
+# Calculo de los minimos entre las frecuencias por pares de secuencias
+
+soul_sal <- data.frame()
+
+for(i in 1:ncol(result)){
+  soul <- vector()
+  for(f in 1:length(result[,i])){
+    for(ty in 1:length(result[,i])){
+      soul <- c(soul, min(c(result[f,i], result[ty,i])))
+    }
+  }
+  soul_sal[1:16,i] <- soul
+}
+
+sume <- t(apply(soul_sal, 1, sum))
+sume <- as.data.frame(t(sume))
+
+# Calculo de lo minimos entre las longitudes por pares de secuencias
+
+minlon <- vector()
+for (i in 1:nrow(lonN)){
+  algo <- 1:length(lonN[,1])
+  for(n in algo){
+    minlon <- c(minlon,min(lonN[i,1],lonN[n,1]))
+  }
+}
+min_lon <- as.data.frame(minlon)
+
+###
+# Calculo de la ecuacion completa
+# Fraccional k-mer common
+
+
+Fractional <- function(table, table1, k=3){ # sume, minlon
+  commonk <- data.frame()
+  for(j in 1:nrow(table)){
+    commonk[1,j] <- 1- (table[j,1]/(table1[j,1]-k+1))
+  }
+  return(commonk)
+}
+
+Fractional_common <- Fractional(sume, min_lon)
+
+#Construcción de la matriz para Fraccional k-mer common
+common <- Fractional_common$V1
+
+mmtx <- matrix(data = Fractional_common, nrow = 4, ncol = 4, byrow = FALSE,
+       dimnames = NULL)
+
+mmtx
+
+```
+- Positividad: d(1,2) > 0  &  d(1,1) = 0 --> 1=1
+- Simetria: d(1,2) = d(2,1) --> 0.9 = 0.9
+- Inequidad del triangula: d(1,2) + d(2,3) >/= d(1,3) --> 0.9 + 1 > 0.8
