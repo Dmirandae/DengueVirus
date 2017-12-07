@@ -5,6 +5,55 @@
 # Leer el archivo con la base de datos 
 datos <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Base_Datos/Base_Datos_Dengue/bd_Dengue.csv", stringsAsFactors = F)
 
+D_0 <- length(datos[datos$Serotype=="DENV",4])
+D_1 <- length(datos[datos$Serotype=="DENV_1",4])
+D_2 <- length(datos[datos$Serotype=="DENV_2",4])
+D_3 <- length(datos[datos$Serotype=="DENV_3",4])
+D_4 <- length(datos[datos$Serotype=="DENV_4",4])
+UNV <- length(datos[datos$Serotype=="UNVERIFIED",4])
+Chi <- length(datos[datos$Serotype=="Chimeric",4])
+Clon <- length(datos[datos$Serotype=="Clone",4])
+
+Serotype <- c(Chi, Clon, D_0, D_1, D_2, D_3, D_4, UNV)
+Name_serotype <- sort(unique(datos$Serotype))
+names(Serotype) <- Name_serotype
+
+count_data <- c(Chi, Clon, D_0, D_1, D_2, D_3, D_4, UNV)
+serotype <- data.frame(count_data, Name_serotype)
+class(Serotype)
+
+
+barplot(Serotype)
+barplot(Serotype[3:7])
+
+library("ggplot2")
+
+p <- ggplot(data = serotype, aes(x= Name_serotype, y = count_data))+
+  geom_bar(stat = "identity")
+
+p
+
+p <- ggplot(data = serotype[3:7,], aes(x= Name_serotype, y = count_data))+
+  geom_bar(stat = "identity")
+
+p
+
+
+#-------------------------------------------------------------------------------------------
+
+Genes <- as.character(unique(datos$Gene))
+Genes[12] <- "NA"
+
+na.exclude(unique(datos$Gene))
+
+coge <- c()
+for(i in Genes){
+  coge[i] <- length(datos[datos$Gene==i,6])
+}
+str(coge)
+barplot(coge)
+
+
 # Extraigo solo los datos que tiene genoma completo
 Complete_genome <- datos[which(datos$Gene=="Complete_Genome"),7]
 
