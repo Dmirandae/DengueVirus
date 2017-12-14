@@ -1,21 +1,24 @@
-#######################################################################
-##     Conteo de k-mer y calculo de las distancias geneticas  #########
-####     distancia Euclidiana, de Mahalanobis y Conteo comun  #########
-#####                       de k-mer                          #########
-#######################################################################
+            #######################################################################
+            ##     Conteo de k-mer y calculo de las distancias geneticas  #########
+            ####     distancia Euclidiana, de Mahalanobis y Conteo comun  #########
+            #####                       de k-mer                          #########
+            #######################################################################
 
 # Lectura de datos: secuencias de DNA Dengue
 
-dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Piloto_congreso_CCB/genomas_denv2/cosmopolitan/seq_cosmo.txt", header= T, sep=" ")
+dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/seq_Disimilaridad97.txt", header= T, sep=" ")
 
 seq <- dat_seq$seq
-str(dat_seq$seq)
-seq <- c("TCAGGTCATCAGG", "CGGTTACATCGGT", "TCAAAAAAGCTAG", "CAGTAAAAAAGCT" )
+
+#seq <- c("TCAGGTCATCAGG", "CGGTTACATCGGT", "CACGCTAGACTAT", "TCAAAAAAGCTAG", "CAGTAAAAAAGCT")
+
 # seq 1 = "AGCGTACGTAGCG"
 # seq 2 = "TCAGGTCATCAGG"
 # seq 3 = "AGCGTACGTAGCG"
 # seq 4 = "CGGTTACATCGGT"
 # seq 5 = "CACGCTAGACTAT"
+# seq 6 = "TCAAAAAAGCTAG"
+# seq 7 = "CAGTAAAAAAGCT"
 
 # Conteo de k-mers para tripletas k=3
 
@@ -109,6 +112,8 @@ Mahalanobis <- nobis
 
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/Dist_Mahalanobis.csv")
 
+# 3:25.82 min
+
 ########################################################################################################
 #########################################################
 # Distancia Conteo comun de k-mer                      ##
@@ -120,6 +125,76 @@ Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengu
 # log --> transformacion logaritmica                   ##
 #########################################################
 
+# Calculo de los minimos entre las frecuencias por pares de secuencias
+
+soul_sal <- data.frame()
+
+for(i in 1:ncol(result)){
+  soul <- vector()
+  for(f in 1:length(result[,i])){
+    for(ty in 1:length(result[,i])){
+      soul <- c(soul, min(c(result[f,i], result[ty,i])))
+    }
+  }
+  soul_sal[1:20164,i] <- soul
+}
+
+sume <- t(apply(soul_sal, 1, sum))
+sume <- as.data.frame(t(sume))
+##40 seg
+# Calculo de lo minimos entre las longitudes por pares de secuencias
+
+minlon <- vector()
+for (i in 1:nrow(lonN)){
+  algo <- 1:length(lonN[,1])
+  for(n in algo){
+    minlon <- c(minlon,min(lonN[i,1],lonN[n,1]))
+  }
+}
+min_lon <- as.data.frame(minlon)
+
+# Calculo de la ecuacion completa
+# Fraccional k-mer common
+
+Fractional <- function(table, table1, k=3){ # sume, minlon
+  commonk <- data.frame()
+  for(j in 1:nrow(table)){
+    commonk[1,j] <- 1- (table[j,1]/(table1[j,1]-k+1))
+  }
+  return(commonk)
+}
+
+Fractional_common <- Fractional(sume, min_lon)
+
+# 15 seg
+
+#Construcción de la matriz para Fraccional k-mer common
+
+mmtx <- matrix(data = Fractional_common, nrow = 142, ncol = 142, byrow = FALSE,
+       dimnames = NULL)
+
+
+Dist_Fractional <- write.csv(fra_matrix, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/Dist_Fraccional.csv")
+
+####################
+## Test de Mantel###
+####################
+
+library(vegan)
+
+mantel(xdis= Euclidiana, ydis= Mahalanobis)
+mantel(xdis= Mahalanobis, ydis= mmtx)
+mantel(xdis= Euclidiana, ydis= mmtx)
+
+#############################
+## escribiendo las tablas ###
+#############################
+
+#write.table(dist_eucli, file="dist_eucli.csv")
+
+#write.table(dist_eucliaa, file="dist_eucliaaNS.csv")
+
+####################################################################################################
 # Calculo de los minimos entre las frecuencias por pares de secuencias
 
 #salida <- data.frame()
@@ -136,21 +211,6 @@ Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengu
 #}
 #colnames(salida) <- kmer3
 
-soul_sal <- data.frame()
-
-for(i in 1:ncol(result)){
-  soul <- vector()
-  for(f in 1:length(result[,i])){
-    for(ty in 1:length(result[,i])){
-      soul <- c(soul, min(c(result[f,i], result[ty,i])))
-    }
-  }
-  soul_sal[1:16,i] <- soul
-}
-
-sume <- t(apply(soul_sal, 1, sum))
-sume <- as.data.frame(t(sume))
-
 # Calculo de lo minimos entre las longitudes por pares de secuencias
 
 #minlon <- vector()
@@ -163,15 +223,6 @@ sume <- as.data.frame(t(sume))
 #}
 
 #min_lon <- as.data.frame(minlon)
-
-minlon <- vector()
-for (i in 1:nrow(lonN)){
-  algo <- 1:length(lonN[,1])
-  for(n in algo){
-    minlon <- c(minlon,min(lonN[i,1],lonN[n,1]))
-  }
-}
-min_lon <- as.data.frame(minlon)
 
 ###
 # Calculo de la ecuacion completa
@@ -191,25 +242,7 @@ min_lon <- as.data.frame(minlon)
 
 #Fraccional_common <- Fractional(salida,min_lon)
 
-Fractional <- function(table, table1, k=3){ # sume, minlon
-  commonk <- data.frame()
-  for(j in 1:nrow(table)){
-    commonk[1,j] <- 1- (table[j,1]/(table1[j,1]-k+1))
-  }
-  return(commonk)
-}
 
-Fractional_common <- Fractional(sume, min_lon)
-Fractional_common <- t(Fractional_common)
-
-#Construcción de la matriz para Fraccional k-mer common
-common <- Fractional_common$V1
-
-mmtx <- matrix(data = Fractional_common, nrow = 4, ncol = 4, byrow = FALSE,
-       dimnames = NULL)
-
-
-#as.matrix(mmtx)
 #for (i in 1:nrow(mmtx)){
 #  n <- nrow(mmtx)
 #  m <- nrow(mmtx)-i
@@ -228,24 +261,25 @@ mmtx <- matrix(data = Fractional_common, nrow = 4, ncol = 4, byrow = FALSE,
 #  fra_matrix[1:n,i] <- c(1:i,mfila) 
 #}
 
-Dist_Fractional <- write.csv(fra_matrix, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/Dist_Fraccional.csv")
 
-#Me falta nombrar las filas y columnas de Salida. PENDIENTE
-#########################################################################################################
-
-## Archivo antiguo
-####################
-## Test de Mantel###
-####################
-
-library(vegan)
-
-mantel(xdis= dist_eucli, ydis= dist_eucliaa)
-
-#############################
-## escribiendo las tablas ###
-#############################
-
-#write.table(dist_eucli, file="dist_eucli.csv")
-
-#write.table(dist_eucliaa, file="dist_eucliaaNS.csv")
+ATGCGTTGTATAGGAATATCAAATAGAGACTTTGTGGAAGGGGTTTCAGGAGGAAGCTGGGTTGACATAG
+TCTTGGAACATGGAAGCTGTGTGACAACGATGGCGAAAAATAAACCAACATTGGATTTTGAACTGATAAA
+AACAGAAGCCAAACATCCCGCCACTCTAAGGAAGTATTGTATAGAGGCAAAGCTGACCAACACAACAACA
+GCATCTCGCTGCCCAACACAAGGAGAACCTAGCCTAAATGAAGAACAGGACAAAAGATTTGTCTGCAAAC
+ACTCCATGGTAGACAGAGGATGGGGAAATGGATGCGGATTATTTGGAAAGGGAGGTATCGTGACCTGTGC
+AATGTTCACATGTAAAAAGAACATGGAAGGAAAAATCGTGCAACCAGAAAATTTGGAGTACACCATTGTG
+ATAACACCTCACTCAGGGGAAGAGAATGCAGTCGGAAATGACACAGGAAAACACGGCAAGGAAATTAAAG
+TGACACCACAGAGCTCCATCACAGAAGCAGAACTAACAGGCTATGGCACTGTCACGATGGAATGCTCTCC
+GAGAACGGGCCTCGACTTCAATGAGATGGTGTTGCTGCAAATGGAAAACAAGGCTTGGCTGGTGCACAGG
+CAATGGTTCTTAGACCTGCCGTTACCATGGCTGCCCGGAGCAGACACACAAGGATCAAATTGGATACAGA
+AGGAGACATTGGTCACTTTCAAAAATCCCCATGCAAAGAAACAGGATGTTGTTGTTTTAGGATCCCAAGA
+AGGGGCTATGCACACAGCACTCACAGGGGCCACGGAAATCCAGATGTCATCAGGAAACTTACTGTTCACA
+GGACATCTTAAATGCAGGTTGAGAATGGACAAACTACAGCTCAAAGGAATGTCATATTCCATGTGTACAG
+GAAAGTTCAAAGTTGTGAAGGAAATAGCAGAAACACAACATGGAACAATAGTTATCAGAGTACAATATGA
+AGGGGACGGTTCTCCGTGCAAAATCCCTTTTGAAATAATGGATTTGGAAAAAAGACATGTCTTAGGTCGC
+TTGATCACAGTCAACCCGATTGTCACAGAAAAAGACAGCCCAGTCAATATAGAAGCAGAACCTCCATTCG
+GAGACAGCTACATCATTATAGGAGTAGAACCGGGACAACTGAAGCTCAGCTGGTTTAAGAAAGGAAGTTC
+TATTGGCCAAATGTTTGAGACAACAATGAGAGGAGCGAAGAGAATGGCCATTTTAGGTGACACAGCTTGG
+GATTTTGGATCCCTGGGAGGAGTGTTTACATCTATAGGAAAGGCCCTCCACCAAGTCTTTGGAGCAATCT
+ATGGGGCTGCCTTCAGTGGGGTGTCATGGACTATGAAAATCCTCATAGGAGTTGTCATCACATGGATAGG
+AATGAATTCA
