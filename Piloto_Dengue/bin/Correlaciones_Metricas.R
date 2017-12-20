@@ -2,12 +2,12 @@
 ##     Conteo de k-mer y calculo de las distancias geneticas  #########
 ####     distancia Euclidiana, de Mahalanobis y Conteo comun  #########
 #####                       de k-mer                          #########
-####          CORRELACION ENRTE LAS TRES METRICAS             ######### 
+####          CORRELACION ENTRE LAS TRES METRICAS             ######### 
 #######################################################################
 
 # Lectura de datos: secuencias de DNA Dengue
 
-# Set datos 1:
+# Set datos 1: secuencias que yo cree para comparar las metricas
 
 seq <- c("TCAGGTCATCAGG", "CGGTTACATCGGT", "CACGCTAGACTAT", "TCAAAAAAGCTAG", "CAGTAAAAAAGCT")
 
@@ -20,13 +20,13 @@ seq <- c("TCAGGTCATCAGG", "CGGTTACATCGGT", "CACGCTAGACTAT", "TCAAAAAAGCTAG", "CA
 # seq 7 = "CAGTAAAAAAGCT"
 
 
-# Set datos 2:
+# Set datos 2: 41 secuencias del genoma de dengue 2 que use en el trabajo para el congreso de ciencias biologicas
 
 dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Piloto_congreso_CCB/genomas_denv2/todos/genotipos_genoma.txt", header= T, sep=" ")
 
 seq <- dat_seq$seq
 
-# Set datos 3:
+# Set datos 3: 142 secuencias del Gen E de Dengue 1, 2 ,3 ,y 4.(estas son las secuencias que se seleccionaron luego de hacer uclust con id 97%)
 
 dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/seq_Disimilaridad97.txt", header= T, sep=" ")
 
@@ -204,21 +204,48 @@ mantel(xdis= Euclidiana, ydis= mmtx)
 #### Pearson     ####
 #####################
 
-library("ggpubr")
-
-ggscatter(x = Euclidiana, y = Mahalanobis, 
-          add = "reg.line", conf.int = TRUE, 
-          cor.coef = TRUE, cor.method = "pearson",
-          xlab = "Euclidiana", ylab = "Mahalanobis")
-
+# Euclidiana Vs Mahalanobis
 Mahalanobis <- as.matrix(Mahalanobis)
 cor.test(Euclidiana, Mahalanobis, method = "pearson")
 
+# Mahalanobis Vs Fractional
 Fractional_common <- as.matrix(Fractional_common)
 mmtx <- matrix(data = Fractional_common, nrow = 142, ncol = 142, byrow = FALSE,
                dimnames = NULL)
 cor.test(Mahalanobis, mmtx, method = "pearson")
 
+# Euclidiana Vs Fractional
 cor.test(Euclidiana, mmtx, method = "pearson")
 
+# Graficas y regresion lineal
 
+# 1. Ajustar datos
+
+Elim_Eu <- which(upper.tri(Euclidiana)==F)
+dist.eucli <- Euclidiana[-Elim_Eu]
+
+Elim_Ma <- which(upper.tri(Mahalanobis)==F)
+dist.maha <- Mahalanobis[-Elim_Ma]
+
+Elim_Fr <- which(upper.tri(mmtx)==F)
+dist.fract <- mmtx[-Elim_Fr]
+
+data.dist <- cbind(dist.eucli,dist.maha,dist.fract)
+data.dist <- as.data.frame(data.dist)
+
+library("ggpubr")
+
+pem <- ggscatter(data.dist, x = "dist.eucli", y = "dist.maha", size = 0.5,
+          add = "reg.line", add.params = list(color="red"), conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Dist. Euclidiana", ylab = "Dist. Mahalanobis")
+
+pmf <- ggscatter(data.dist, x = "dist.maha", y = "dist.fract", size = 0.5,
+          add = "reg.line", add.params = list(color="red"), conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Dist. Mahalanobis", ylab = "Dist. Conteo Fracional de k-mer comunes ")
+
+pef <- ggscatter(data.dist, x = "dist.eucli", y = "dist.fract", size = 0.5,
+          add = "reg.line", add.params = list(color="red"), conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Dist. Euclidiana", ylab = "Dist. Conteo Fracional de k-mer comunes ")
