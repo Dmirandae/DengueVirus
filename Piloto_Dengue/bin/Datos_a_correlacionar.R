@@ -1,4 +1,6 @@
-
+###############################################################################################
+#####   Selecionar y organizar los datos del Gen E y Genoma que se van a correlacionar   ######
+###############################################################################################
 
 ##############
 ##  GEN E  ###
@@ -209,3 +211,55 @@ for(i in 1:length(Denv4g_pan$N_Accesion)){
 
 seq_d4_paan <- seq_genoma_paan[position_d4,]
 write.table(seq_d4_paan, file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/seq_denv4_paan.txt")
+#----------------------------------------------------------------------------------------------------
+################################################################################
+#Vectores de coordenadas geograficas para calcular las distancias geograficas ##
+################################################################################
+#GEN E
+dge_loan <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/Location_year.csv", header = T)
+Coordenadas_loan <- dge_loan[,c(12,19,20)]
+
+write.csv(Coordenadas_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/Coordenadas_loan.csv")
+
+CoordenadasD1_loan <- Denv_1[,c(11,18,19)] 
+write.csv(CoordenadasD1_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/CoordenadasD1_loan.csv")
+
+CoordenadasD2_loan <- Denv_2[,c(11,18,19)] 
+write.csv(CoordenadasD2_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/CoordenadasD2_loan.csv")
+
+CoordenadasD3_loan <- Denv_3[,c(11,18,19)] 
+write.csv(CoordenadasD3_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/CoordenadasD3_loan.csv")
+
+CoordenadasD4_loan <- Denv_4[,c(11,18,19)] 
+write.csv(CoordenadasD4_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/CoordenadasD4_loan.csv")
+
+#GENOMA
+CoordenadasG_loan <- dat_Genomalo_an[,c(11,18,19)]
+write.csv(CoordenadasG_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/Coordenadas_loan.csv")
+
+CoordenadasGD1_loan <- Denv_1g[,c(11,18,19)]
+write.csv(CoordenadasGD1_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD1_loan.csv")
+
+CoordenadasGD2_loan <- Denv_2g[,c(11,18,19)]
+write.csv(CoordenadasGD2_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD2_loan.csv")
+
+CoordenadasGD3_loan <- Denv_3g[,c(11,18,19)]
+write.csv(CoordenadasGD3_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD3_loan.csv")
+
+CoordenadasGD4_loan <- Denv_4g[,c(11,18,19)]
+write.csv(CoordenadasGD4_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD4_loan.csv")
+#----
+CoordenadasG_paan <- dat_Genoma_paan[,c(11,18,19)]
+write.csv(CoordenadasG_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/Coordenadas_paan.csv")
+
+CoordenadasGD1_paan <- Denv1g_pan[,c(11,18,19)]
+write.csv(CoordenadasGD1_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD1_paan.csv")
+
+CoordenadasGD2_paan <- Denv2g_pan[,c(11,18,19)]
+write.csv(CoordenadasGD2_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD2_paan.csv")
+
+CoordenadasGD3_paan <- Denv3g_pan[,c(11,18,19)]
+write.csv(CoordenadasGD3_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD3_paan.csv")
+
+CoordenadasGD4_paan <- Denv4g_pan[,c(11,18,19)]
+write.csv(CoordenadasGD4_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD4_paan.csv")
