@@ -7,18 +7,18 @@
 library(?fossil)
 
 #este paquete requiere raster
-library(?dismo)
+library(dismo)
 library(raster)
 
 # geodist
 
 geodist(55.75,37.63, 39.9,116.4)  # Moscow - Beijing
-geodist(90,0, -90,0, "nm")        # from pole to pole
+?geoDist(90,0, -90,0, "nm")        # from pole to pole
 
-
+library(geosphere)
 library(maptool)
 
-
+??distm
 # calcular centroide
 
 library(sp)
