@@ -97,7 +97,7 @@ dat_genoma <- read.csv(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_de
 seq_genoma <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/Seq_disimilaridad97.txt", header= T, sep=" ")
 
 # Datos de Genoma que tiene localidad y ano
-Genomalo_an <- which(is.na(dat_genoma$Location)==F & is.na(dat_genoma$Year)==F)
+Genomalo_an <- which(is.na(dat_genoma$Location)==F & is.na(dat_genoma$Year)==F & is.na(dat_genoma$))
 dat_Genomalo_an <- dat_genoma[Genomalo_an,]
 
 write.csv(dat_Genomalo_an, file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/Location_year.csv")
@@ -234,6 +234,7 @@ CoordenadasD4_loan <- Denv_4[,c(11,18,19)]
 write.csv(CoordenadasD4_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/CoordenadasD4_loan.csv")
 
 #GENOMA
+# LOCALIDAD Y ANO
 CoordenadasG_loan <- dat_Genomalo_an[,c(11,18,19)]
 write.csv(CoordenadasG_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/Coordenadas_loan.csv")
 
@@ -249,17 +250,18 @@ write.csv(CoordenadasGD3_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuen
 CoordenadasGD4_loan <- Denv_4g[,c(11,18,19)]
 write.csv(CoordenadasGD4_loan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD4_loan.csv")
 #----
-CoordenadasG_paan <- dat_Genoma_paan[,c(11,18,19)]
+#PAIS Y ANO 
+CoordenadasG_paan <- dat_Genoma_paan[,c(10,14,15)]
 write.csv(CoordenadasG_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/Coordenadas_paan.csv")
 
-CoordenadasGD1_paan <- Denv1g_pan[,c(11,18,19)]
+CoordenadasGD1_paan <- Denv1g_pan[,c(10,14,15)]
 write.csv(CoordenadasGD1_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD1_paan.csv")
 
-CoordenadasGD2_paan <- Denv2g_pan[,c(11,18,19)]
+CoordenadasGD2_paan <- Denv2g_pan[,c(10,14,15)]
 write.csv(CoordenadasGD2_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD2_paan.csv")
 
-CoordenadasGD3_paan <- Denv3g_pan[,c(11,18,19)]
+CoordenadasGD3_paan <- Denv3g_pan[,c(10,14,15)]
 write.csv(CoordenadasGD3_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD3_paan.csv")
 
-CoordenadasGD4_paan <- Denv4g_pan[,c(11,18,19)]
+CoordenadasGD4_paan <- Denv4g_pan[,c(10,14,15)]
 write.csv(CoordenadasGD4_paan,file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genoma_completo/sub_database/CoordenadasD4_paan.csv")
