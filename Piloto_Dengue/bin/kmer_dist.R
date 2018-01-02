@@ -18,10 +18,6 @@ seq <- dat_seq$seq
 dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/Seq_denv1.txt", header = T, sep = " ")
 seq <- dat_seq$seq
 
-#1.2 Secuencias del Gen E Dengue 1 con localidad y ano
-dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/Seq_denv1.txt", header = T, sep = " ")
-seq <- dat_seq$seq
-
 #1.3 Secuencias del Gen E Dengue 2 con localidad y año
 dat_seq <- read.table(file = "/home/andrea/LSB/Piloto_Dengue/data/Secuencias_descargadas/Secuencias_genE/sub_database/Seq_denv2.txt", header = T, sep = " ")
 seq <- dat_seq$seq
@@ -113,52 +109,82 @@ Euclidiana <- Euclidian(result)
 ## MATRICES GEN E ##
 
 # matrix genE con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Euclidiana_loan.csv")
 
 # matrix Dengue 1 genE con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Euclidiana_DENV1_loan.csv")
 
 # matrix Dengue 2 gen E con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Euclidiana_DENV2_loan.csv")
 
 # matrix Dengue 3 gen E con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Euclidiana_DENV3_loan.csv")
 
 # matrix Dengue 4 gen E con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Euclidiana_DENV4_loan.csv")
 #---------------------------------------------------------------------------------------------
 
 ## MATRICES GENOMA
 
 # matrix genoma con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_loan.csv")
 
 # matrix Dengue 1 genoma con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV1_loan.csv")
 
 # matrix Dengue 2 genoma con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV2_loan.csv")
 
 # matrix Dengue 3 genoma con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV3_loan.csv")
 
 # matrix Dengue 4 genoma con localidad y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV4_loan.csv")
 #----------
 
 # matrix genoma con pais y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_paan.csv")
 
 # matrix Dengue 1 genoma con pais y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV1_paan.csv")
 
 # matrix Dengue 2 genoma con pais y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV2_paan.csv")
 
 # matrix Dengue 3 genoma con pais y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV3_paan.csv")
 
 # matrix Dengue 4 genoma con pais y ano
+colnames(Euclidiana) <- dat_seq$id
+rownames(Euclidiana) <- dat_seq$id
 Dist_Euclidiana <- write.csv(Euclidiana, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Euclidiana_DENV4_paan.csv")
 
 #######################################################################################################
@@ -223,52 +249,82 @@ Mahalanobis <- nobis
 ## MATRICES GEN E 
 
 # Matrix de Gen E con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Mahalanobis_loan.csv")
 
 # Matrix de Dengue 1 Gen E con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Mahalanobis_DENV1_loan.csv")
 
 # Matrix de Dengue 2 Gen E con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Mahalanobis_DENV2_loan.csv")
 
 # Matrix de Dengue 3 Gen E con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Mahalanobis_DENV3_loan.csv")
 
 # Matrix de Dengue 4 Gen E con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Mahalanobis_DENV4_loan.csv")
 #--------------------------------------------------------------------------------------------------
 
 ## MATRICES GENOMA
 
 # matrix genoma con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_loan.csv")
 
 # matrix de Dengue 1 genoma con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV1_loan.csv")
 
 # matrix de Dengue 2 genoma con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV2_loan.csv")
 
 # matrix de Dengue 3 genoma con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV3_loan.csv")
 
 # matrix de Dengue 4 genoma con localidad y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV4_loan.csv")
 
 #----------------
 # matrix genoma con pais y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_paan.csv")
 
 # matrix Dengue 1 genoma con pais y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV1_paan.csv")
 
 # matrix Dengue 2 genoma con pais y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV2_paan.csv")
 
 # matrix Dengue 3 genoma con pais y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV3_paan.csv")
 
 # matrix Dengue 4 genoma con pais y ano
+colnames(Mahalanobis) <- dat_seq$id
+rownames(Mahalanobis) <- dat_seq$id
 Dist_Mahalanobis <- write.csv(Mahalanobis, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Mahalanobis_DENV4_paan.csv")
 
 # 3:25.82 min
@@ -337,52 +393,82 @@ mmtx <- matrix(data = Fractional_common, nrow = 10, ncol = 10, byrow = FALSE,
 ## MATRICES GEN E
 
 # Matrix gen E con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Fraccional_loan.csv")
 
 # Matrix Dengue1 gen E con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Fraccional_DENV1_loan.csv")
 
 # Matrix Dengue2 gen E con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Fraccional_DENV2_loan.csv")
 
 # Matrix Dengue3 gen E con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Fraccional_DENV3_loan.csv")
 
 # Matrix Dengue4 gen E con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genE/Fraccional_DENV4_loan.csv")
 #------------------------------------------------------------------------------------------------
 
 ## MATRICES GENOMA ##
 
 # Matrix genoma con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_loan.csv")
 
 # Matrix Dengue 1 genoma con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV1_loan.csv")
 
 # Matrix Dengue 2 genoma con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV2_loan.csv")
 
 # Matrix Dengue 3 genoma con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV3_loan.csv")
 
 # Matrix Dengue 4 genoma con localidad y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV4_loan.csv")
 #-----
 
 # Matrix genoma con pais y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_paan.csv")
 
 # Matrix Dengue 1 genoma con pais y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV1_paan.csv")
 
 # Matrix Dengue 2 genoma con pais y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV2_paan.csv")
 
 # Matrix Dengue 3 genoma con pais y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV3_paan.csv")
 
 # Matrix Dengue 4 genoma con pais y ano
+colnames(mmtx) <- dat_seq$id
+rownames(mmtx) <- dat_seq$id
 Dist_Fractional <- write.csv(mmtx, file = "/home/andrea/LSB/Piloto_Dengue/data/Matrices_distancias/matrices_genoma/Fraccional_DENV4_paan.csv")
 
 ####################
